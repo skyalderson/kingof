@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Parties en attente{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4 haetten font150">
+
+        <div class="row p-1">
+                <div class="col">Jeu</div>
+                <div class="col">Nom&nbsp;de&nbsp;la&nbsp;partie</div>
+                <div class="col">Sélection&nbsp;Monstres</div>
+                <div class="col">Mode</div>
+                <div class="col">Règles&nbsp;Additionnelles</div>
+                <div class="col">Monstres</div>
+                <div class="col">Joueurs</div>
+                <div class="col"></div>
+            </div>
+
+    {% for game in games %}
+        <div class="row p-1">
+            <div class="col">{{ game.board.name }}</div> 
+            <div class="col">{{ game.name }} </div>
+            <div class="col">{{ game.monstersselectlabel }} </div>
+            <div class="col">{{ game.mode.name }}</div>
+            <div class="col">
+                {% for rule in game.rules %}
+                <img src="img/rules/{{rule.imgname}}" height="20px" alt="{{rule.name}}">
+                {% endfor %}
+            </div>
+            <div class="col">{{ game.nbmonstersallowed }}</div>
+            <div class="col">{{ game.nbplayers }} sur {{ game.maxplayers }}</div>
+            <div class="col"><a class="btn btn-outline-secondary btn-sm" href={{ path('game.lobby', { 'id': game.id }) }}>Rejoindre</a></div>        
+        </div>
+    {% endfor %}   
+</div>
+{% endblock %}

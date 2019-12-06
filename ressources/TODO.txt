@@ -1,0 +1,14 @@
+- Entité Box
+    - Relations avec Rule et Monster
+    - Fixtures
+    
+- Entité Person
+    - Relation avec entité Player
+    - Relation Player/Game - Creator
+
+- Form CREATE GAME : 
+    - choix aléatoire des monstres
+    - jquery pour affichage options selon jeu choisi
+    - mise en page (form_row, colonnes monstres)
+    - images Jeux / Monstres
+

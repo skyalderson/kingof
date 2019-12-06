@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Partie{% endblock %}
+
+{% block body %}
+<p>TODO : </p>
+<ul>
+    <li>Couleur secondaire labels</li>
+    <li>Seconde police pour champs modifiables</li>
+    <li>Créer icones règles</li>
+</ul>
+
+{{ dump(form)}}
+
+<div class="jumbotron goodgirl mr-3 ml-3 mb-0 pt-3 pb-0 mt-2">
+    
+    {{ form_start(form) }}
+    <fieldset class="form-group">
+    <div class="row">
+        <legend class=" bg-purple lbl text-yellow text-center col-12 col-sm-12 col-lg-2 col-xl-2  col-form-label required">Jeu</legend>
+        <div class="col-12 col-sm-12 col-lg-3 col-xl-2">          
+            <div class="form-check pl-0">        
+                <select id="game_board" name="game[board]" class="form-control custom-select">
+                    {% for value, data in form.board.vars.choices %}
+                    <option value="{{ data.value }}" {% if data.attr.disabled == true %}disabled="disabled"{% endif %}>{{ data.label }}</option>
+                {% endfor %}    
+                </select>
+            </div>
+        </div>
+        <label class="bg-purple lbl text-yellow text-center col-12 col-sm-12 col-lg-2 col-xl-2  col-form-label required" for="game_name">Nom de la partie</label>   
+        <div class="col-12 col-sm-12 col-lg-5 col-xl-6  pr-0">
+            <input type="text" id="game_name" name="game[name]" required="required" class="form-control" value='Partie de {{ app.user.username }}' />
+        </div>
+    </div>
+    </fieldset>
+    
+    <fieldset class="form-group">
+        <div class="row">
+            <legend class="bg-purple lbl text-yellow text-center col-xl-12 col-form-label required">Règles additionnelles</legend>
+        </div>
+        <div class="row mt-1">
+        {% for data in form.rules.vars.choices %}
+            <div class="col pl-0 pr-0">
+                <div class="bg-purple lbl text-yellow text-center col-form-label pr-1 pl-1  font100">
+                <span>{{ data.label }}</span>
+                </div>
+                <div class="mt-2">
+                {% for data2 in data.choices %}
+          
+                <div class="form-check  checkbox icheck-pumpkin {{ data2.attr.class }}">
+                <input type="checkbox" id="game_rules_{{ data2.value }}" name="game[rules][]" {% if data2.attr.disabled == true %} disabled="disabled" {% endif %} class="{{ data2.attr.class }} form-check-input" value="{{ data2.value }}" />
+                
+                <label class="{{ data2.attr.class }} form-check-label" for="game_rules_{{ data2.value }}">
+                    {{ data2.label }}<img src="/img/rules/{{imgRules[data2.value]}}" height="20em" class="pl-1 mr-1"></label>   
+                </div>
+            {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </fieldset>
+
+
+<fieldset class="form-group">
+    <div class="row">
+        <label class="bg-purple lbl text-yellow text-center col-form-label col-12 col-xl-2 required" for="game_maxplayers">Nb joueurs max:</label>
+        <div class="col-12 col-xl-2">
+            <input type="number" id="game_maxplayers" name="game[maxplayers]" required="required" min="2" max="6" class="form-control" value="6" />
+        </div>
+        <label class=" bg-purple lbl text-yellow text-center col-form-label col-12 col-xl-2 required" for="game_monstersSelect">Choix Monstres</label>
+        <div class="col-12 col-xl-2">
+            <select id="game_monstersSelect" name="game[monstersSelect]" class="form-control custom-select">
+                {% for value, data in form.monstersSelect.vars.choices.0.choices %}
+                    <option value="{{ data.value }}">{{ data.label }}</option>
+                {% endfor %}          
+            </select>
+        </div>
+        <label class=" bg-purple lbl text-yellow text-center col-form-label col-12 col-xl-2 required" for="game_mode">Mode</label>
+        <div class="col-12 col-xl-2">
+            <select id="game_mode" name="game[mode]" class="form-control custom-select">
+                {% for value, data in form.mode.vars.choices %}
+                    <option id="mode_{{ data.value }}" value="{{ data.value }}" {% if data.value == 2 %} disabled="disabled" {% endif %}>{{ data.label }}</option>
+                {% endfor %}      
+            </select>
+        </div>
+    </div>
+    </fieldset>  
+
+    <fieldset class="form-group mb-0">
+        <div class="row">
+            <legend class=" bg-purple lbl text-yellow text-center col-xl-12 col-form-label required">Monstres autorisés</legend>
+        </div>
+        <div class="row">
+        {% for data in form.monstersAuthorized.vars.choices %}
+            <div class="col pl-0 pr-0">             
+                <div class=" bg-purple lbl text-yellow text-center col-form-label font100 checkbox icheck-pumpkin">
+                <input type="checkbox" class="group_monsters" id="{{ data.label|lower|replace({' ': '_'}) }}" name="{{ data.label|lower|replace({' ': '_'}) }}" checked="checked" value="{{ data.label|lower|replace({' ': '_'}) }}" />
+                <label class="form-check-label" for="{{ data.label|lower|replace({' ': '_'}) }}">{{ data.label }}</label>            
+                </div>     
+                {% if data.choices|length <= 8 %}
+                {% for data2 in data.choices %}              
+                <div class="form-check checkbox icheck-pumpkin">           
+                    <input type="checkbox" id="game_monstersAuthorized_{{ data2.value }}" name="game[monstersAuthorized][]" checked="checked" class="form-check-input {{ data.label|lower|replace({' ': '_'}) }}" value="{{ data2.value }}" />
+                    <label class="form-check-label" for="game_monstersAuthorized_{{ data2.value }}">{{ data2.label }}</label>
+                </div>
+                {% endfor %}
+
+                {% else %}
+                <div class="row">
+                <div class="col">
+                {% for data2 in data.choices %} 
+                
+                <div class="form-check checkbox icheck-pumpkin">           
+                    <input type="checkbox" id="game_monstersAuthorized_{{ data2.value }}" name="game[monstersAuthorized][]" checked="checked" class="form-check-input {{ data.label|lower|replace({' ': '_'}) }}" value="{{ data2.value }}" />
+                    <label class="form-check-label" for="game_monstersAuthorized_{{ data2.value }}">{{ data2.label }}</label>
+                </div>
+
+                {% if loop.index == 7 %}</div><div class="col">{% endif %}
+                
+                {% endfor %}
+                </div>
+                </div>
+
+                {% endif %}
+            
+            </div>
+        {% endfor %}
+        </div>
+    </fieldset>
+    
+<div class="row justify-content-center"><input type='submit' name='creategame' value='Créer la Partie !' class="btn btn-danger mb-2 col-12 col-xl-4"></div>
+<input type="hidden" name="token" value="{{ csrf_token('create-game') }}"/>
+
+{{ form_end(form, {'render_rest': false}) }}
+
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+
+{{ encore_entry_script_tags('gamecreate') }} 
+
+
+{% endblock %}
+
