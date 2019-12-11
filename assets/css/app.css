@@ -140,7 +140,9 @@ text-shadow:
 .font100{font-size: 75%;}
 .lbl{border-radius:5px;}
 
-.jumbotron{background-color: #e8dff9;}
+.bg-purple-light{background-color: #e8dff9;}
+
+.jumbotron{}
 
 /*\
 |*| ========================================================================

@@ -11,11 +11,12 @@ class PlayerVoter extends Voter
 {
     // these strings are just invented: you can use anything
     const KICK = 'kick';
+    const QUIT = 'quit';
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::KICK])) {
+        if (!in_array($attribute, [self::KICK, self::QUIT])) {
             return false;
         }
 
@@ -42,18 +43,26 @@ class PlayerVoter extends Voter
 
         switch ($attribute) {
             case self::KICK:
-                return $this->canDelete($player, $user);
+                return $this->canKick($player, $user);
+            case self::QUIT:
+                return $this->canQuit($player, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canDelete(Player $player, User $user)
-    {       
+    private function canKick(Player $player, User $user)
+    {
         $game = $player->getGame();
-        if ($game->getCreatorUser() == $user) return true;
+        if ($game->getCreatorUser() == $user) {
+            return true;
+        }
     }
 
+    private function canQuit(Player $player, User $user)
+    {
+        if ($player->getUser() == $user) {
+            return true;
+        }
+    }
 }
-
-?>

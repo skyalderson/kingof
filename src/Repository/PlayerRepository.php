@@ -18,24 +18,25 @@ class PlayerRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Player::class);
     }
-    
+
     /**
+     * @param $idGame
+     * @param $id_player
+     *
      * @return Player[] Returns an array of Player objects
-    */
-    
+     */
     public function findMonstersWithoutMe($idGame, $id_player)
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.game = :val1')    
+            ->andWhere('p.game = :val1')
             ->andWhere('p.id != :val2')
-            
+
             ->setParameter('val1', $idGame)
             ->setParameter('val2', $id_player)
             ->getQuery()
             ->getResult()
         ;
     }
-    
 
     // /**
     //  * @return Player[] Returns an array of Player objects

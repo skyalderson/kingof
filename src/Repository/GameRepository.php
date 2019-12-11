@@ -20,6 +20,7 @@ class GameRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param $state
      * @return Game[] Returns an array of Game objects
      */
     public function findByState($state)

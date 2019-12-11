@@ -26,7 +26,7 @@ class MonsterRepository extends ServiceEntityRepository
     /**
      * @return Monster[] Returns an array of Monster objects
      */
-    public function test()
+    /* public function test()
     {
         return $this->createQueryBuilder('m')
         ->select('count(m.id)')
@@ -36,7 +36,7 @@ class MonsterRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
-    }
+    }*/
 
     // /**
     //  * @return Monster[] Returns an array of Monster objects

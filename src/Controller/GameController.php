@@ -11,25 +11,33 @@ use App\Repository\GameRepository;
 use App\Repository\ModeRepository;
 use App\Repository\MonsterRepository;
 use App\Repository\RuleRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class GameController extends AbstractController
 {
     /**
      * @Route("/game/create", name="game.create")
      * @isGranted("ROLE_USER")
+     *
+     * @param ModeRepository $modeRepo
+     * @param BoardRepository $boardRepo
+     * @param MonsterRepository $monsterRepo
+     * @return RedirectResponse
+     *
+     * @throws \Exception
      */
     public function gameCreate(ModeRepository $modeRepo, BoardRepository $boardRepo, MonsterRepository $monsterRepo)
     {
         $em = $this->getDoctrine()->getManager();
-        
+
         $game = new Game();
-        $game->setName("Partie de ".$this->getUser()->getUsername());
-        
+        $game->setName('Partie de '.$this->getUser()->getUsername());
+
         $mode = $modeRepo->find(1);
         $game->setMode($mode);
 
@@ -37,32 +45,37 @@ class GameController extends AbstractController
         $game->setBoard($board);
 
         $monsters = $monsterRepo->findAll();
-        foreach($monsters as $monster)
-        {
+        foreach ($monsters as $monster) {
             $game->addMonstersAuthorized($monster);
         }
 
         $game->setState(1);
         $game->setMaxPlayers(6);
-    
+
         $em->persist($game);
         $em->flush();
-        
+
         $creator = new Player();
         $creator->setGame($game);
         $creator->setUser($this->getUser());
         $creator->setCreator(true);
-        $creator->setJoinedAt(new \DateTime("now"));
- 
+        $creator->setJoinedAt(new \DateTime('now'));
+
         $em->persist($creator);
         $em->flush();
 
         return $this->redirectToRoute('game.lobby', ['id' => $game->getId()]);
     }
-    
+
     /**
      * @Route("/game/create/advanced", name="game.create.advanced")
      * @isGranted("ROLE_USER")
+     *
+     * @param Request $request
+     * @param RuleRepository $ruleRepo
+     * @return RedirectResponse|Response
+     *
+     * @throws \Exception
      */
     public function gameCreateAdvanded(Request $request, RuleRepository $ruleRepo)
     {
@@ -80,7 +93,7 @@ class GameController extends AbstractController
             $creator->setUser($this->getUser());
             $creator->setCreator(true);
             $creator->setIsReady(false);
-            $creator->setJoinedAt(new \DateTime("now"));
+            $creator->setJoinedAt(new \DateTime('now'));
 
             $em->persist($game);
             $em->persist($creator);
@@ -103,6 +116,9 @@ class GameController extends AbstractController
     /**
      * @Route("/game/list", name="game.list")
      * @isGranted("ROLE_USER")
+     *
+     * @param GameRepository $GameRepository
+     * @return Response
      */
     public function gameList(GameRepository $GameRepository)
     {
@@ -116,6 +132,11 @@ class GameController extends AbstractController
     /**
      * @Route("/game/lobby/{id}", name="game.lobby", methods={"GET"})
      * @isGranted("ROLE_USER")
+     *
+     * @param Game $game
+     * @return Response
+     *
+     * @throws \Exception
      */
     public function gameLobby(Game $game)
     {
@@ -124,6 +145,7 @@ class GameController extends AbstractController
         $isAbsent = true;
         foreach ($game->getPlayers() as $p) {
             if ($p->getUser() == $this->getUser()) {
+                $player = $p;
                 $isAbsent = false;
             }
         }
@@ -133,7 +155,7 @@ class GameController extends AbstractController
             $player->setUser($this->getUser());
             $player->setCreator(false);
             $player->setIsReady(false);
-            $player->setJoinedAt(new \DateTime("now"));
+            $player->setJoinedAt(new \DateTime('now'));
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($player);
@@ -145,31 +167,36 @@ class GameController extends AbstractController
 
         return $this->render('game/lobby.html.twig', [
             'game' => $game,
-            'form' => $form->createView()
+            'player' => $player,
+            'form' => $form->createView(),
         ]);
     }
 
     /**
      * @Route("/game/delete/{id}", name="game.delete", methods={"GET"})
      * @isGranted("ROLE_USER")
+     *
+     * @param Game $game
+     * @return RedirectResponse
      */
-
-     function gameDelete(Game $game)
-     {
+    public function gameDelete(Game $game)
+    {
         $this->denyAccessUnlessGranted('delete', $game);
         $em = $this->getDoctrine()->getManager();
         $em->remove($game);
         $em->flush();
 
         return $this->redirectToRoute('home');
-     }
+    }
 
-     /**
+    /**
      * @Route("/player/kick/{id}", name="player.kick", methods={"GET"})
      * @isGranted("ROLE_USER")
+     *
+     * @param Player $player
+     * @return RedirectResponse
      */
-
-    function gameKick(Player $player)
+    public function gameKick(Player $player)
     {
         $this->denyAccessUnlessGranted('kick', $player);
         $idGame = $player->getGame()->getId();
@@ -178,6 +205,25 @@ class GameController extends AbstractController
         $em->remove($player);
         $em->flush();
 
-        return $this->redirectToRoute("game.lobby", array('id'=>$idGame));
+        return $this->redirectToRoute('game.lobby', ['id' => $idGame]);
+    }
+
+    /**
+     * @Route("/game/quit/{id}", name="game.quit", methods={"GET"})
+     * @isGranted("ROLE_USER")
+     *
+     * @param Player $player
+     * @return RedirectResponse
+     */
+
+    public function gameQuit(Player $player)
+    {
+        $this->denyAccessUnlessGranted('quit', $player);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($player);
+        $em->flush();
+
+        return $this->redirectToRoute('game.list');
     }
 }
