@@ -33,7 +33,7 @@
                                 <div class="card-header text-center  pt-0 pl-0 pr-0 pb-1">
                                     <p class="m-0" >{{ player.user.username }}</p>
                                 </div>
-                                <img class="card-img img-fluid bg-purple-light" src="/img/monsters/to-right/{{ player.monster.imgname}}" alt="{{ player.monster.name}}" {% if player.incity != 0 %} style="filter:grayscale(100%) sepia(50%) opacity(75%) brightness(150%);"{% endif %}>
+                                <img class="card-img img-fluid bg-purple-light" src="/img/monsters/to-right/{{ player.monster.imgname}}" alt="{{ player.monster.name}}" {% if player.incity != 0 %} style="filter:grayscale(100%) sepia(50%) opacity(75%) brightness(150%"{% endif %}>
                                 <div class="card-body p-0">
                                     <h5 class="card-title text-center "></h5>
                                     <div class="row text-center m-0">
@@ -81,12 +81,12 @@
                 <div class="row">
                     <div class="col-12 col-sm-10 col-md-10 col-lg-12 col-xl-12 p-0" >
                         <img class="img-fluid" src="/img/board.png" alt="Card image">
-                        <div id="inTokyo1" class="card-img-overlay">
+                        <div id="inTokyo1" class="card-img-overlay p-0">
                             {% for player in players_by_order %}
                                 {% if player.incity == 1 %}<img class="img-fluid" src="/img/monsters/in-tokyo-1/{{ player.monster.imgname }}"/>{% endif %}
                             {% endfor %}
                         </div>
-                        <div id="inTokyo2" class="card-img-overlay">
+                        <div id="inTokyo2" class="card-img-overlay p-0">
                             {% for player in players_by_order %}
                             {% if player.incity == 2 %}<img class="img-fluid" src="/img/monsters/in-tokyo-2/{{ player.monster.imgname }}"/><{% endif %}
                         {% endfor %}
