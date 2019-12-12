@@ -38,6 +38,11 @@ class Board
      */
     private $available;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $imgName;
+
     public function __construct()
     {
         $this->ruleApplicable = new ArrayCollection();
@@ -126,6 +131,18 @@ class Board
     public function setAvailable(bool $available): self
     {
         $this->available = $available;
+
+        return $this;
+    }
+
+    public function getImgName(): ?string
+    {
+        return $this->imgName;
+    }
+
+    public function setImgName(?string $imgName): self
+    {
+        $this->imgName = $imgName;
 
         return $this;
     }

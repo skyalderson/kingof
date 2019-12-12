@@ -5,44 +5,35 @@
 {% block body %}
 
     <!-- Modal -->
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="nope" aria-hidden="true">
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="nope" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div id="modal_msg" class="modal-body goodgirl">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="btn-modal" type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
 </div>
-
+<div id="data" data-thisplayer="{{ this_player }}" style="display:none;"></div>
 
 <div  class="jumbotron bg-purple-light goodgirl text-yellow mr-3 ml-3 mb-0 pt-3 pb-3 mt-2">
 
 
         <div class="row" >
 
-            <!-- CALCULER LARGEUR COLONNES JOUEURS SELON NB
-                    - 6 : 2 lignes de 3
-                    - 5 : vide - 2 joueurs - vide
-                    - 4 : 2 lignes de 2
-                    - 3 : une ligne de 3
-                    - 2 : une ligne de 2
-
-            -->
-
-
             <div class="col-sm-12 col-md-12 col-lg-8 col-xl-4">
                 <div class="row" >
-                    {% for player in game.players %}
+                    {% for player in players_by_order %}
+
                         <div class="col-6 col-sm-4 col-md-4 col-lg-2 col-xl-4 pl-1 pr-1 m-0">
 
                             <div class="card p-1 {% if player.isplaying == true %}bg-dark{% else %}bg-purple{% endif %}">
                                 <div class="card-header text-center  pt-0 pl-0 pr-0 pb-1">
                                     <p class="m-0" >{{ player.user.username }}</p>
                                 </div>
-                                <img class="card-img img-fluid bg-purple-light" src="/img/monsters/to-left/{{ player.monster.imgname}}" alt="{{ player.monster.name}}" >
+                                <img class="card-img img-fluid bg-purple-light" src="/img/monsters/to-right/{{ player.monster.imgname}}" alt="{{ player.monster.name}}" {% if player.incity != 0 %} style="filter:grayscale(100%) sepia(50%) opacity(75%) brightness(150%);"{% endif %}>
                                 <div class="card-body p-0">
                                     <h5 class="card-title text-center "></h5>
                                     <div class="row text-center m-0">
@@ -90,12 +81,16 @@
                 <div class="row">
                     <div class="col-12 col-sm-10 col-md-10 col-lg-12 col-xl-12 p-0" >
                         <img class="img-fluid" src="/img/board.png" alt="Card image">
-                        <div class="card-img-overlay">
-                            <img class="img-fluid" src="/img/monsters/in-tokyo-1/intokyo.png"/>
+                        <div id="inTokyo1" class="card-img-overlay">
+                            {% for player in players_by_order %}
+                                {% if player.incity == 1 %}<img class="img-fluid" src="/img/monsters/in-tokyo-1/{{ player.monster.imgname }}"/>{% endif %}
+                            {% endfor %}
                         </div>
-
-
-
+                        <div id="inTokyo2" class="card-img-overlay">
+                            {% for player in players_by_order %}
+                            {% if player.incity == 2 %}<img class="img-fluid" src="/img/monsters/in-tokyo-2/{{ player.monster.imgname }}"/><{% endif %}
+                        {% endfor %}
+                        </div>
                     </div>
                     <div class="col-12 col-sm-2 col-md-2 col-lg-12 col-xl-12" >
                         <div class="row">
@@ -116,7 +111,7 @@
                 </div>
             </div>
                 <div class="col-xl-4 m-0" >
-                    <div class="p-1" style="overflow:scroll; border:#000000 1px solid;">
+                    <div class="p-1" style="max-height:80vh;overflow:scroll; border:#000000 1px solid;">
                         Le passage de Lorem Ipsum standard, utilisé depuis 1500
 
                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
@@ -149,6 +144,6 @@
 
 
 {% block javascripts %}
-
+    {{ encore_entry_script_tags('play') }}
 {% endblock %}
 

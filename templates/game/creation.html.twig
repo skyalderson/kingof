@@ -3,12 +3,12 @@
 {% block title %}Nouvelle Partie{% endblock %}
 
 {% block body %}
-<p>TODO : </p>
+<!--p>TODO : </p>
 <ul>
     <li>Couleur secondaire labels</li>
     <li>Seconde police pour champs modifiables</li>
     <li>Créer icones règles</li>
-</ul>
+</ul-->
 
 {{ dump(form)}}
 
@@ -100,7 +100,7 @@
                 {% if data.choices|length <= 8 %}
                 {% for data2 in data.choices %}              
                 <div class="form-check checkbox icheck-pumpkin">           
-                    <input type="checkbox" id="game_monstersAuthorized_{{ data2.value }}" name="game[monstersAuthorized][]" checked="checked" class="form-check-input {{ data.label|lower|replace({' ': '_'}) }}" value="{{ data2.value }}" />
+                    <input type="checkbox" id="game_monstersAuthorized_{{ data2.value }}" name="game[monstersAuthorized][]" checked="checked" class="{{ data2.attr.class }} form-check-input {{ data.label|lower|replace({' ': '_'}) }}" value="{{ data2.value }}"  {% if data2.attr.disabled == true %} disabled="disabled" {% endif %}/>
                     <label class="form-check-label" for="game_monstersAuthorized_{{ data2.value }}">{{ data2.label }}</label>
                 </div>
                 {% endfor %}
@@ -111,7 +111,7 @@
                 {% for data2 in data.choices %} 
                 
                 <div class="form-check checkbox icheck-pumpkin">           
-                    <input type="checkbox" id="game_monstersAuthorized_{{ data2.value }}" name="game[monstersAuthorized][]" checked="checked" class="form-check-input {{ data.label|lower|replace({' ': '_'}) }}" value="{{ data2.value }}" />
+                    <input type="checkbox" id="game_monstersAuthorized_{{ data2.value }}" name="game[monstersAuthorized][]" checked="checked" class="{{ data2.attr.class }} form-check-input {{ data.label|lower|replace({' ': '_'}) }}" value="{{ data2.value }}"  {% if data2.attr.disabled == true %} disabled="disabled" {% endif %}/>
                     <label class="form-check-label" for="game_monstersAuthorized_{{ data2.value }}">{{ data2.label }}</label>
                 </div>
 

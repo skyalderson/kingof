@@ -112,7 +112,22 @@ class GameType extends AbstractType
                 'multiple' => true,
                 'label' => 'Monstres autorisés',
                 'choice_attr' => function ($monster) {
-                    return ['checked' => true];
+                    $_return = [];
+                    $_return['checked'] = true;
+                    $_return['disabled'] = (1 == $monster->getAvailable()) ? false : true;
+                    if (false == $monster->getAvailable()) {
+                        $_return["class"] = 'monster_notav';
+                        $_return['disabled'] = true;
+                    }
+                    else {
+                        $_return['disabled'] = false;
+                        $_return["class"] = '';
+                    }
+
+
+                    return $_return;
+
+
                 },
                 'group_by' => function ($monster) {
                     return $monster->getBox()->getBoxType()->getName();

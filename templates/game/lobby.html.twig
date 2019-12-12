@@ -37,10 +37,10 @@
          bg-purple lbl text-yellow text-center p-2">{{ game.name }}
             {% if app.user == game.creatoruser %}
                 <a class="btn btn-danger btn-sm mr-2" href={{ path('game.delete', { 'id': game.id }) }} style="position: absolute; display: inline; right: 0;">
-                <img src="/img/trash.png" height="24px"></a>
+                <img src="/img/icons/trash.png" height="24px"></a>
             {% else %}
                 <a class="btn btn-danger btn-sm mr-2" href={{ path('game.quit', { 'id': player.id }) }} style="position: absolute; display: inline; right: 0;">
-                <img src="/img/quit.png" height="24px"></a>{% endif %}
+                <img src="/img/icons/quit.png" height="24px"></a>{% endif %}
         </h3></div>
     <form  name="lobby" method="post">
     <div id="list">
@@ -64,19 +64,15 @@
                     <input type="checkbox" id="lobby_ready_self" name="lobby[ready][{{ player_inlist.id}}]" data-width="110" data-toggle="toggle" data-on="Prêt !" data-off="Prêt ?" data-onstyle="success" data-offstyle="danger" {% if player_inlist.isready == false %}{% else %}checked{% endif %}/>
                 </div>  
                 <div>
-                </div>         
-                <div id="data" data-gameid="{{ game.id }}" data-playerid="{{ player.id }}" data-creatorid="{{ game.creatoruser.id }}" display="none"></div>
+                </div>
+                <div id="data" data-gameid="{{ game.id }}" data-playerid="{{ player.id }}" data-playeruserid="{{ player.user.id }}" data-creatorid="{{ game.creatoruser.id }}" display="none"></div>
             {% else %}
                 <div class="col-xl-3 col-lg-3 col-md-3">                   
                     <input type="text" id="monster_{{ player_inlist.id}}" name="monster_{{ player_inlist.id}}" readonly='readonly' disabled='disabled' value="{% if player_inlist.monster == null %}Aucun monstre sélectionné{% else %}{{ player_inlist.monster.name}}{% endif %}" class="form-control">
                 </div>
                 <div class="col-xl-1 col-lg-1 col-md-1 text-center align-middle">
                     <span id='ready_{{ player_inlist.id}}' >
-                        {% if player_inlist.isready == false %}
-                            <span class="badge badge-danger  pt-2" style="display:block; min-width:110px; min-height:36px; font-size: 1rem;">Attente</span>
-                        {% else %}
-                            <span class="badge badge-success  pt-2" style="display:block; min-width:110px; min-height:36px; font-size: 1rem;">Prêt</span>
-                        {% endif %}          
+                        <span class="badge badge-{% if player_inlist.isready == false %}danger{% else %}success{% endif %}  pt-2" style="display:block; min-width:110px; min-height:36px; font-size: 1rem;">{% if player_inlist.isready == false %}Attente{% else %}Prêt{% endif %}</span>
                     </span>
                 </div>                    
             {% endif %}
@@ -95,7 +91,7 @@
     <input type="hidden" id="lobby__token" name="lobby[_token]" value="JuZQAMAkRNqHF3FfDrtd_g-MTHekRGWBEUxAm61X7fI" />
     {% if app.user == game.creatoruser %}
         <div class="row justify-content-center">
-            <input type='submit' class="btn btn-danger col-12 col-xl-4 col-lg-4 col-md-4" id='launchgame' name='launchgame' value='Lancer la partie !' disabled='disabled'></div>
+            <input type='button' class="btn btn-danger col-12 col-xl-4 col-lg-4 col-md-4" id='launchgame' name='launchgame' value='Lancer la partie !' disabled='disabled'></div>
         
     {% endif %}
     </form> 

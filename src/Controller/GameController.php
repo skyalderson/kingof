@@ -46,7 +46,7 @@ class GameController extends AbstractController
 
         $monsters = $monsterRepo->findAll();
         foreach ($monsters as $monster) {
-            $game->addMonstersAuthorized($monster);
+            if($monster->getAvailable() === true) $game->addMonstersAuthorized($monster);
         }
 
         $game->setState(1);

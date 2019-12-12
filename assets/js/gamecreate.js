@@ -37,8 +37,9 @@ $(document).ready(function(){
         else{
             $(".monstres_bonus").prop('checked', true); 
             $("#monstres_bonus").prop('checked', true); 
-            $(".monstres_bonus").prop('disabled', false); 
-            $("#monstres_bonus").prop('disabled', false); 
+            $(".monstres_bonus").prop('disabled', false);
+            $("#monstres_bonus").prop('disabled', false);
+            $(".monster_notav").prop('disabled', true);
             $("#game_mode").val(1);
             $("#mode_2").prop('disabled', true);
 

@@ -27,6 +27,8 @@ Encore
     .addEntry('bootstrap4-toggle', './assets/js/bootstrap4-toggle.js')
     .addEntry('gamecreate', './assets/js/gamecreate.js')
     .addEntry('lobby', './assets/js/lobby.js')
+    .addEntry('list', './assets/js/list.js')
+    .addEntry('play', './assets/js/play.js')
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 

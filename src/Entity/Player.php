@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -93,18 +95,24 @@ class Player
      */
     private $joinedAt;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Log", mappedBy="player")
+     */
+    private $logs;
+
     public function __construct()
     {
         $this->isReady = false;
         $this->isAlive = true;  
-        $this->inCity = true;   
+        $this->inCity = 0;
         $this->gp = 0;   
         $this->hp = 10;   
         $this->hpMax = 10;   
         $this->nbDices = 6; 
         $this->nbMana = 0;   
         $this->turn = 0;   
-        $this->isPlaying = false;     
+        $this->isPlaying = false;
+        $this->logs = new ArrayCollection();     
     }
 
     public function getId(): ?int
@@ -288,6 +296,37 @@ class Player
     public function setJoinedAt(\DateTimeInterface $joinedAt): self
     {
         $this->joinedAt = $joinedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Log[]
+     */
+    public function getLogs(): Collection
+    {
+        return $this->logs;
+    }
+
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getPlayer() === $this) {
+                $log->setPlayer(null);
+            }
+        }
 
         return $this;
     }

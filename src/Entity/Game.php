@@ -73,11 +73,17 @@ class Game
      */
     private $players;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Log", mappedBy="game", orphanRemoval=true)
+     */
+    private $logs;
+
     public function __construct()
     {
         $this->rules = new ArrayCollection();
         $this->monstersAuthorized = new ArrayCollection();
         $this->players = new ArrayCollection();
+        $this->logs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -257,23 +263,52 @@ class Game
 
     public function getCreatorPlayer()
     {
-        $players = $this->getPlayers(); 
-        foreach($players as $player)
-        {
-            if ($player->getCreator() == true) return $player;
-
-        }  
-
+        $players = $this->getPlayers();
+        foreach ($players as $player) {
+            if (true == $player->getCreator()) {
+                return $player;
+            }
+        }
     }
 
     public function getCreatorUser()
     {
-        $players = $this->getPlayers(); 
-        foreach($players as $player)
-        {
-            if ($player->getCreator() == true) return $player->getUser();
+        $players = $this->getPlayers();
+        foreach ($players as $player) {
+            if (true == $player->getCreator()) {
+                return $player->getUser();
+            }
+        }
+    }
 
-        }  
+    /**
+     * @return Collection|Log[]
+     */
+    public function getLogs(): Collection
+    {
+        return $this->logs;
+    }
 
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getGame() === $this) {
+                $log->setGame(null);
+            }
+        }
+
+        return $this;
     }
 }

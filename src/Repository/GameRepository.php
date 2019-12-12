@@ -33,6 +33,17 @@ class GameRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByStateForList($state)
+    {
+        return $this->createQueryBuilder('g')
+            ->select('g.id')
+            ->andWhere('g.state = :state')
+            ->setParameter('state', $state)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return Game[] Returns an array of Game objects
     //  */
