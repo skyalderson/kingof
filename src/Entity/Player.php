@@ -100,6 +100,11 @@ class Player
      */
     private $logs;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Log", inversedBy="playersHasSeen")
+     */
+    private $lastLog;
+
     public function __construct()
     {
         $this->isReady = false;
@@ -327,6 +332,18 @@ class Player
                 $log->setPlayer(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastLog(): ?Log
+    {
+        return $this->lastLog;
+    }
+
+    public function setLastLog(?Log $LastLog): self
+    {
+        $this->lastLog = $LastLog;
 
         return $this;
     }

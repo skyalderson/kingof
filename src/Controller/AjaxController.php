@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Log;
 use App\Repository\GameRepository;
 use App\Repository\MonsterRepository;
 use App\Repository\PlayerRepository;
@@ -16,9 +17,6 @@ class AjaxController extends AbstractController
     /**
      * @Route("/lobby/launch", name="lobby.launch", methods={"POST"})
      *
-     * @param Request $req
-     * @param GameRepository $gameRepo
-     * @param PlayerRepository $playerRepo
      * @return Response
      */
     public function launchGame(Request $req, GameRepository $gameRepo, PlayerRepository $playerRepo)
@@ -32,21 +30,32 @@ class AjaxController extends AbstractController
             $game->setState(2);
             $em->persist($game);
 
+            $log = new Log();
+            $log->setGame($game);
+
             $_repoPlayers = $game->getPlayers()->toArray();
 
-            for ($i = 1; $i <= count($_repoPlayers) ; $i++) {
+            for ($i = 1; $i <= count($_repoPlayers); ++$i) {
                 $rand[$i] = $i;
             }
 
-            foreach ($_repoPlayers as $player)
-            {
+            foreach ($_repoPlayers as $player) {
                 $player = $playerRepo->find($player->getId());
                 $turn = array_rand($rand, 1);
                 unset($rand[$turn]);
 
                 $player->setTurn($turn);
+
+                if (1 === $turn) {
+                    $player->setIsPlaying(true);
+                    $log->setPlayer($player);
+                }
                 $em->persist($player);
             }
+
+            $log->setIsDone(false);
+            $log->setAction('start_turn');
+            $em->persist($log);
 
             $em->flush();
 
@@ -59,8 +68,6 @@ class AjaxController extends AbstractController
     /**
      * @Route("/lobby/islaunchready", name="lobby.islaunchready", methods={"POST"})
      *
-     * @param Request $req
-     * @param GameRepository $gameRepo
      * @return JsonResponse|Response
      */
     public function isLaunchReady(Request $req, GameRepository $gameRepo)
@@ -91,8 +98,6 @@ class AjaxController extends AbstractController
     /**
      * @Route("/lobby/data", name="lobby.data", methods={"POST"})
      *
-     * @param Request $req
-     * @param GameRepository $gameRepo
      * @return JsonResponse|Response
      */
     public function updateDataLobby(Request $req, GameRepository $gameRepo)
@@ -150,8 +155,6 @@ class AjaxController extends AbstractController
     /**
      * @Route("/lobby/ready", name="lobby.ready", methods={"POST"})
      *
-     * @param Request $req
-     * @param PlayerRepository $playerRepo
      * @return Response
      */
     public function readyState(Request $req, PlayerRepository $playerRepo)
@@ -178,9 +181,6 @@ class AjaxController extends AbstractController
     /**
      * @Route("/lobby/select/monster", name="lobby.select.monster", methods={"POST"})
      *
-     * @param Request $req
-     * @param PlayerRepository $playerRepo
-     * @param MonsterRepository $monsterRepo
      * @return Response
      */
     public function selectMonster(Request $req, PlayerRepository $playerRepo, MonsterRepository $monsterRepo)
@@ -225,8 +225,6 @@ class AjaxController extends AbstractController
     /**
      * @Route("/list/data", name="list.data", methods={"POST"})
      *
-     * @param Request $req
-     * @param GameRepository $gameRepo
      * @return JsonResponse|Response
      */
     public function updateDataList(Request $req, GameRepository $gameRepo)
@@ -253,8 +251,6 @@ class AjaxController extends AbstractController
     /**
      * @Route("/game/slot_available", name="game.slot_available", methods={"POST"})
      *
-     * @param Request $req
-     * @param GameRepository $gameRepo
      * @return Response
      */
     public function isSlotAvailable(Request $req, GameRepository $gameRepo)

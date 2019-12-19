@@ -11,12 +11,12 @@ use App\Repository\GameRepository;
 use App\Repository\ModeRepository;
 use App\Repository\MonsterRepository;
 use App\Repository\RuleRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class GameController extends AbstractController
 {
@@ -24,9 +24,6 @@ class GameController extends AbstractController
      * @Route("/game/create", name="game.create")
      * @isGranted("ROLE_USER")
      *
-     * @param ModeRepository $modeRepo
-     * @param BoardRepository $boardRepo
-     * @param MonsterRepository $monsterRepo
      * @return RedirectResponse
      *
      * @throws \Exception
@@ -46,7 +43,9 @@ class GameController extends AbstractController
 
         $monsters = $monsterRepo->findAll();
         foreach ($monsters as $monster) {
-            if($monster->getAvailable() === true) $game->addMonstersAuthorized($monster);
+            if (true === $monster->getAvailable()) {
+                $game->addMonstersAuthorized($monster);
+            }
         }
 
         $game->setState(1);
@@ -71,8 +70,6 @@ class GameController extends AbstractController
      * @Route("/game/create/advanced", name="game.create.advanced")
      * @isGranted("ROLE_USER")
      *
-     * @param Request $request
-     * @param RuleRepository $ruleRepo
      * @return RedirectResponse|Response
      *
      * @throws \Exception
@@ -117,7 +114,6 @@ class GameController extends AbstractController
      * @Route("/game/list", name="game.list")
      * @isGranted("ROLE_USER")
      *
-     * @param GameRepository $GameRepository
      * @return Response
      */
     public function gameList(GameRepository $GameRepository)
@@ -133,7 +129,6 @@ class GameController extends AbstractController
      * @Route("/game/lobby/{id}", name="game.lobby", methods={"GET"})
      * @isGranted("ROLE_USER")
      *
-     * @param Game $game
      * @return Response
      *
      * @throws \Exception
@@ -176,7 +171,6 @@ class GameController extends AbstractController
      * @Route("/game/delete/{id}", name="game.delete", methods={"GET"})
      * @isGranted("ROLE_USER")
      *
-     * @param Game $game
      * @return RedirectResponse
      */
     public function gameDelete(Game $game)
@@ -193,7 +187,6 @@ class GameController extends AbstractController
      * @Route("/player/kick/{id}", name="player.kick", methods={"GET"})
      * @isGranted("ROLE_USER")
      *
-     * @param Player $player
      * @return RedirectResponse
      */
     public function gameKick(Player $player)
@@ -212,10 +205,8 @@ class GameController extends AbstractController
      * @Route("/game/quit/{id}", name="game.quit", methods={"GET"})
      * @isGranted("ROLE_USER")
      *
-     * @param Player $player
      * @return RedirectResponse
      */
-
     public function gameQuit(Player $player)
     {
         $this->denyAccessUnlessGranted('quit', $player);

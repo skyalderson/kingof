@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  jeu. 12 déc. 2019 à 10:25
+-- Généré le :  jeu. 19 déc. 2019 à 09:14
 -- Version du serveur :  5.7.26
 -- Version de PHP :  7.2.18
 
@@ -154,7 +154,15 @@ CREATE TABLE IF NOT EXISTS `game` (
   PRIMARY KEY (`id`),
   KEY `IDX_232B318C77E5854A` (`mode_id`),
   KEY `IDX_232B318CE7EC5785` (`board_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `game`
+--
+
+INSERT INTO `game` (`id`, `mode_id`, `board_id`, `name`, `state`, `monsters_select`, `max_players`) VALUES
+(1, 1, 1, 'Partie de sky', 2, 0, 6),
+(2, 1, 1, 'Partie de sky', 1, 0, 6);
 
 -- --------------------------------------------------------
 
@@ -170,6 +178,42 @@ CREATE TABLE IF NOT EXISTS `game_monster` (
   KEY `IDX_B19CB9DBE48FD905` (`game_id`),
   KEY `IDX_B19CB9DBC5FF1223` (`monster_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `game_monster`
+--
+
+INSERT INTO `game_monster` (`game_id`, `monster_id`) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 5),
+(1, 6),
+(1, 7),
+(1, 8),
+(1, 16),
+(1, 17),
+(1, 19),
+(1, 20),
+(1, 21),
+(1, 23),
+(1, 29),
+(1, 30),
+(2, 1),
+(2, 2),
+(2, 3),
+(2, 5),
+(2, 6),
+(2, 7),
+(2, 8),
+(2, 16),
+(2, 17),
+(2, 19),
+(2, 20),
+(2, 21),
+(2, 23),
+(2, 29),
+(2, 30);
 
 -- --------------------------------------------------------
 
@@ -198,10 +242,138 @@ CREATE TABLE IF NOT EXISTS `log` (
   `game_id` int(11) NOT NULL,
   `player_id` int(11) NOT NULL,
   `is_done` tinyint(1) NOT NULL,
+  `action` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_8F3F68C5E48FD905` (`game_id`),
-  KEY `IDX_8F3F68C599E6F5DF` (`player_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  KEY `IDX_8F3F68C599E6F5DF` (`player_id`),
+  KEY `is_done` (`is_done`)
+) ENGINE=InnoDB AUTO_INCREMENT=645 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `log`
+--
+
+INSERT INTO `log` (`id`, `game_id`, `player_id`, `is_done`, `action`) VALUES
+(311, 1, 1, 1, 'start_turn'),
+(526, 1, 1, 1, 'is_starting_in_city'),
+(527, 1, 1, 1, 'init_dices'),
+(528, 1, 1, 1, 'throw_dices'),
+(529, 1, 1, 1, 'end_turn'),
+(530, 1, 2, 1, 'start_turn'),
+(531, 1, 2, 1, 'is_starting_in_city'),
+(532, 1, 2, 1, 'init_dices'),
+(533, 1, 2, 1, 'throw_dices'),
+(534, 1, 2, 1, 'end_turn'),
+(535, 1, 1, 1, 'start_turn'),
+(536, 1, 1, 1, 'is_starting_in_city'),
+(537, 1, 1, 1, 'init_dices'),
+(538, 1, 1, 1, 'throw_dices'),
+(539, 1, 1, 1, 'end_turn'),
+(540, 1, 2, 1, 'start_turn'),
+(541, 1, 2, 1, 'is_starting_in_city'),
+(542, 1, 2, 1, 'init_dices'),
+(543, 1, 2, 1, 'throw_dices'),
+(544, 1, 2, 1, 'end_turn'),
+(545, 1, 1, 1, 'start_turn'),
+(546, 1, 1, 1, 'is_starting_in_city'),
+(547, 1, 1, 1, 'init_dices'),
+(548, 1, 1, 1, 'throw_dices'),
+(549, 1, 1, 1, 'end_turn'),
+(550, 1, 2, 1, 'start_turn'),
+(551, 1, 2, 1, 'is_starting_in_city'),
+(552, 1, 2, 1, 'init_dices'),
+(553, 1, 2, 1, 'throw_dices'),
+(554, 1, 2, 1, 'end_turn'),
+(555, 1, 1, 1, 'start_turn'),
+(556, 1, 1, 1, 'is_starting_in_city'),
+(557, 1, 1, 1, 'init_dices'),
+(558, 1, 1, 1, 'throw_dices'),
+(559, 1, 1, 1, 'end_turn'),
+(560, 1, 2, 1, 'start_turn'),
+(561, 1, 2, 1, 'is_starting_in_city'),
+(562, 1, 2, 1, 'init_dices'),
+(563, 1, 2, 1, 'throw_dices'),
+(564, 1, 2, 1, 'end_turn'),
+(565, 1, 1, 1, 'start_turn'),
+(566, 1, 1, 1, 'is_starting_in_city'),
+(567, 1, 1, 1, 'init_dices'),
+(568, 1, 1, 1, 'throw_dices'),
+(569, 1, 1, 1, 'end_turn'),
+(570, 1, 2, 1, 'start_turn'),
+(571, 1, 2, 1, 'is_starting_in_city'),
+(572, 1, 2, 1, 'init_dices'),
+(573, 1, 2, 1, 'throw_dices'),
+(574, 1, 2, 1, 'end_turn'),
+(575, 1, 1, 1, 'start_turn'),
+(576, 1, 1, 1, 'is_starting_in_city'),
+(577, 1, 1, 1, 'init_dices'),
+(578, 1, 1, 1, 'throw_dices'),
+(579, 1, 1, 1, 'end_turn'),
+(580, 1, 2, 1, 'start_turn'),
+(581, 1, 2, 1, 'is_starting_in_city'),
+(582, 1, 2, 1, 'init_dices'),
+(583, 1, 2, 1, 'throw_dices'),
+(584, 1, 2, 1, 'end_turn'),
+(585, 1, 1, 1, 'start_turn'),
+(586, 1, 1, 1, 'is_starting_in_city'),
+(587, 1, 1, 1, 'init_dices'),
+(588, 1, 1, 1, 'throw_dices'),
+(589, 1, 1, 1, 'end_turn'),
+(590, 1, 2, 1, 'start_turn'),
+(591, 1, 2, 1, 'is_starting_in_city'),
+(592, 1, 2, 1, 'init_dices'),
+(593, 1, 2, 1, 'throw_dices'),
+(594, 1, 2, 1, 'end_turn'),
+(595, 1, 1, 1, 'start_turn'),
+(596, 1, 1, 1, 'is_starting_in_city'),
+(597, 1, 1, 1, 'init_dices'),
+(598, 1, 1, 1, 'throw_dices'),
+(599, 1, 1, 1, 'end_turn'),
+(600, 1, 2, 1, 'start_turn'),
+(601, 1, 2, 1, 'is_starting_in_city'),
+(602, 1, 2, 1, 'init_dices'),
+(603, 1, 2, 1, 'throw_dices'),
+(604, 1, 2, 1, 'end_turn'),
+(605, 1, 1, 1, 'start_turn'),
+(606, 1, 1, 1, 'is_starting_in_city'),
+(607, 1, 1, 1, 'init_dices'),
+(608, 1, 1, 1, 'throw_dices'),
+(609, 1, 1, 1, 'end_turn'),
+(610, 1, 2, 1, 'start_turn'),
+(611, 1, 2, 1, 'is_starting_in_city'),
+(612, 1, 2, 1, 'init_dices'),
+(613, 1, 2, 1, 'throw_dices'),
+(614, 1, 2, 1, 'end_turn'),
+(615, 1, 1, 1, 'start_turn'),
+(616, 1, 1, 1, 'is_starting_in_city'),
+(617, 1, 1, 1, 'init_dices'),
+(618, 1, 1, 1, 'throw_dices'),
+(619, 1, 1, 1, 'end_turn'),
+(620, 1, 2, 1, 'start_turn'),
+(621, 1, 2, 1, 'is_starting_in_city'),
+(622, 1, 2, 1, 'init_dices'),
+(623, 1, 2, 1, 'throw_dices'),
+(624, 1, 2, 1, 'end_turn'),
+(625, 1, 1, 1, 'start_turn'),
+(626, 1, 1, 1, 'is_starting_in_city'),
+(627, 1, 1, 1, 'init_dices'),
+(628, 1, 1, 1, 'throw_dices'),
+(629, 1, 1, 1, 'end_turn'),
+(630, 1, 2, 1, 'start_turn'),
+(631, 1, 2, 1, 'is_starting_in_city'),
+(632, 1, 2, 1, 'init_dices'),
+(633, 1, 2, 1, 'throw_dices'),
+(634, 1, 2, 1, 'end_turn'),
+(635, 1, 1, 1, 'start_turn'),
+(636, 1, 1, 1, 'is_starting_in_city'),
+(637, 1, 1, 1, 'init_dices'),
+(638, 1, 1, 1, 'throw_dices'),
+(639, 1, 1, 1, 'end_turn'),
+(640, 1, 2, 1, 'start_turn'),
+(641, 1, 2, 1, 'is_starting_in_city'),
+(642, 1, 2, 1, 'init_dices'),
+(643, 1, 2, 1, 'throw_dices'),
+(644, 1, 2, 0, 'end_turn');
 
 -- --------------------------------------------------------
 
@@ -215,6 +387,16 @@ CREATE TABLE IF NOT EXISTS `migration_versions` (
   `executed_at` datetime NOT NULL COMMENT '(DC2Type:datetime_immutable)',
   PRIMARY KEY (`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `migration_versions`
+--
+
+INSERT INTO `migration_versions` (`version`, `executed_at`) VALUES
+('20191213143258', '2019-12-13 14:33:06'),
+('20191213152855', '2019-12-13 15:29:03'),
+('20191213153111', '2019-12-13 15:31:16'),
+('20191214024826', '2019-12-14 02:48:37');
 
 -- --------------------------------------------------------
 
@@ -320,11 +502,21 @@ CREATE TABLE IF NOT EXISTS `player` (
   `turn` smallint(6) NOT NULL,
   `is_playing` tinyint(1) NOT NULL,
   `joined_at` datetime NOT NULL,
+  `last_log_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_98197A65C5FF1223` (`monster_id`),
   KEY `IDX_98197A65E48FD905` (`game_id`),
-  KEY `IDX_98197A65A76ED395` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  KEY `IDX_98197A65A76ED395` (`user_id`),
+  KEY `IDX_98197A656060DF5C` (`last_log_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `player`
+--
+
+INSERT INTO `player` (`id`, `monster_id`, `game_id`, `user_id`, `creator`, `is_ready`, `is_alive`, `in_city`, `gp`, `hp`, `hp_max`, `nb_dices`, `nb_mana`, `turn`, `is_playing`, `joined_at`, `last_log_id`) VALUES
+(1, 23, 1, 1, 1, 1, 1, 0, 0, 10, 10, 6, 0, 1, 0, '2019-12-13 09:08:12', 643),
+(2, 3, 1, 2, 0, 1, 1, 1, 12, 10, 10, 8, 0, 2, 1, '2019-12-13 09:08:42', 643);
 
 -- --------------------------------------------------------
 
@@ -443,6 +635,7 @@ ALTER TABLE `monster`
 -- Contraintes pour la table `player`
 --
 ALTER TABLE `player`
+  ADD CONSTRAINT `FK_98197A656060DF5C` FOREIGN KEY (`last_log_id`) REFERENCES `log` (`id`),
   ADD CONSTRAINT `FK_98197A65A76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   ADD CONSTRAINT `FK_98197A65C5FF1223` FOREIGN KEY (`monster_id`) REFERENCES `monster` (`id`),
   ADD CONSTRAINT `FK_98197A65E48FD905` FOREIGN KEY (`game_id`) REFERENCES `game` (`id`);
