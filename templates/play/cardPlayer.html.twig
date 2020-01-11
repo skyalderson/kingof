@@ -1,0 +1,63 @@
+<div class="card p-1 {% if player.isalive is same as (false) %}bg-gray{% elseif player.isplaying == true %}bg-orange{% else %}bg-purple{% endif %}" id="display_{{ player.id}}">
+    <div class="card-header text-center pt-0 pb-1">
+        {% set uname_l = player.user.username|length %}
+        {% set f_base =  1.5 %}
+        {% set f_size =  (uname_l/8 <= 1)? f_base : f_base / (uname_l/8) %}
+        <p id="playerName_{{ player.id}}" class="m-0 {% if player.isalive is same as (false) %}text-gray{% else %}text-yellow{% endif %}" style="font-size:{{ f_size }}rem;line-height:{{ f_base }}rem;min-height:{{ f_base }}rem;max-height:{{ f_base }}rem;">{{ player.user.username }}</p>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="card">
+            <img id="monsterImg_{{ player.id}}" class="card-img img-fluid bg-purple-light p-1 {% if player.isalive is same as (false) %}img-dead{% elseif player.incity != 0 %}img-in-city"{% endif %}" src="/img/monsters/to-left/regular/{{ player.monster.imgname}}" alt="{{ player.monster.name}}" >
+            <div id="badgeTokyo_{{ player.id}}" class="card-img-overlay img-fluid p-0" >
+                {% if player.incity == 1 %}
+                    <img class="img-fluid p-1" src="/img/symbols/tokyo1.png" >
+                {% elseif player.incity == 2 %}
+                    <img class="img-fluid p-1" src="/img/symbols/tokyo2.png" >
+                {% endif %}
+            </div>
+            <div id="playerDead_{{ player.id}}" class="card-img-overlay img-fluid p-0" >
+                {% if player.isalive is same as (false) %}
+                    <img class="img-fluid p-1 img-dead" src="/img/symbols/dead.png" >
+                {% endif %}
+            </div>
+        </div>
+        <div class="row m-0 p-0">
+            <div class="col-10 m-0 p-0 mt-1 pr-1">
+                <div class="row text-center m-0">
+                    <div class="col-2 p-0 ">
+                        <img id="playerHeart_{{ player.id}}" class="{% if player.isalive is same as (false) %}img-dead{% endif %}" src="/img/symbols/heart.png" style="max-height:1rem;"></img>
+                    </div>
+                    <div class="col-10 text-center p-0 pt-1 pl-1">
+                        <div class="progress" style="width:{% if player.hpmax == 12 %}100{% else %}83.333{% endif %}%;">
+                            <div id="hp_{{ player.id }}" class="progress-bar {% if player.isalive is same as (false) %}bg-gray2 text-gray{% else %}bg-danger text-white{% endif %}" role="progressbar" style="width:{{ 100 * player.hp / player.hpmax }}%" aria-valuenow="{{ player.hp }}" aria-valuemin="0" aria-valuemax="{{ player.hpmax }}">{{ player.hp }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-center m-0 ">
+                    <div class="col-2 p-0 ">
+                        <img id="playerStar_{{ player.id}}" class="{% if player.isalive is same as (false) %}img-dead{% endif %}" src="/img/symbols/star.png" style="max-height:1rem;" ></img>
+                    </div>
+                    <div class="col-10 text-center p-0 pt-1 pl-1">
+                        <div  class="progress"  style="width:83.333%;">
+                            <div id="vp_{{ player.id }}" class="progress-bar {% if player.isalive is same as (false) %}bg-gray2 text-gray{% else %}bg-primary text-white{% endif %}" role="progressbar" style="width: {{ 100 * player.vp / 20 }}%" aria-valuenow="{{ player.vp }}" aria-valuemin="0" aria-valuemax="20">{{ player.vp }} </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 m-0 p-0 mt-2 mb-1 text-center" >
+                <div id="playerMana_{{ player.id}}" class="rounded text-center p-0 {% if player.isalive is same as (false) %}bg-gray2 text-gray{% else %}bg-green text-white{% endif %}">
+                    <img id="playerFlash_{{ player.id}}" src="/img/symbols/flash.png" class="m-0 p-0 {% if player.isalive is same as (false) %}img-dead{% endif %}" style="max-height:1.2rem;" >
+                    <p id="nbMana_{{ player.id }}" class="font75 mb-0" style="line-height:1rem;min-width:1.5rem;">{{ player.nbmana }}</p></div>
+            </div>
+        </div>
+        <div class="row m-0 p-0 mt-1">
+            <div class="col-2 m-0 pad-1"><img class="playerCard_{{ player.id}} img-fluid{% if player.isalive is same as (false) %} img-dead{% endif %}" src="/img/cards/kot/card_verso.png"/></div>
+            <div class="col-2 m-0 pad-1"><img class="playerCard_{{ player.id}} img-fluid{% if player.isalive is same as (false) %} img-dead{% endif %}" src="/img/cards/kot/card_verso.png"/></div>
+            <div class="col-2 m-0 pad-1"><img class="playerCard_{{ player.id}} img-fluid{% if player.isalive is same as (false) %} img-dead{% endif %}" src="/img/cards/kot/card_verso.png"/></div>
+            <div class="col-2 m-0 pad-1"><img class="playerCard_{{ player.id}} img-fluid{% if player.isalive is same as (false) %} img-dead{% endif %}" src="/img/cards/kot/card_verso.png"/></div>
+            <div class="col-2 m-0 pad-1"><img class="playerCard_{{ player.id}} img-fluid{% if player.isalive is same as (false) %} img-dead{% endif %}" src="/img/cards/kot/card_verso.png"/></div>
+            <div class="col-2 m-0 pad-1"><img class="playerCard_{{ player.id}} img-fluid{% if player.isalive is same as (false) %} img-dead{% endif %}" src="/img/cards/kot/card_verso.png"/></div>
+        </div>
+    </div>
+</div>

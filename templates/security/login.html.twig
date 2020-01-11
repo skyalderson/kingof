@@ -1,42 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Connexion{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+    <div class="jumbotron goodgirl mr-3 ml-3 mb-0 pt-0 pb-0 mt-2 bg-purple-light text-yellow" style="max-height:90vh">
+        <div class="row no-gutter">
+            <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+            <div class="col-md-8 col-lg-6">
+                <div class="login d-flex align-items-center py-5">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-9 col-lg-8 mx-auto">
+                                <h3 class="login-heading mb-4">Connexion</h3>
+                                <form method="post">
+                                    {% if error %}
+                                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                                    {% endif %}
 
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                                    {% if app.user %}
+                                        <div class="mb-3">
+                                            You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-label-group-login">
+                                        <input type="text" id="inputUsername" name="username" class="form-control" value="{{ last_username }}" required autofocus>
+                                        <!--label for="inputUsername">Email address</label-->
+                                    </div>
+
+                                    <div class="form-label-group-login">
+                                        <input type="password" name="password" id="inputPassword" class="form-control"  required>
+                                        <!--label for="inputPassword">Password</label-->
+                                    </div>
+                                    <input type="hidden" name="_csrf_token"
+                                           value="{{ csrf_token('authenticate') }}"
+                                    >
+                                    <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" type="submit">Sign in</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    {% endif %}
-
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputUsername">Username</label>
-    <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" required>
-
-    <input type="hidden" name="_csrf_token"
-           value="{{ csrf_token('authenticate') }}"
-    >
-
-    {#
-        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-        See https://symfony.com/doc/current/security/remember_me.html
-
-        <div class="checkbox mb-3">
-            <label>
-                <input type="checkbox" name="_remember_me"> Remember me
-            </label>
-        </div>
-    #}
-
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
+    </div>
 </form>
 {% endblock %}

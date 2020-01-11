@@ -78,12 +78,43 @@ class Game
      */
     private $logs;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\KotCardGame", mappedBy="game", orphanRemoval=true)
+     */
+    private $kotCards;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Player", inversedBy="gamesWon")
+     */
+    private $winner;
+
+    /**
+     * @ORM\Column(type="string", length=32, nullable=true)
+     */
+    private $victoryType;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $finishedAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $startedAt;
+
     public function __construct()
     {
         $this->rules = new ArrayCollection();
         $this->monstersAuthorized = new ArrayCollection();
         $this->players = new ArrayCollection();
         $this->logs = new ArrayCollection();
+        $this->kotCards = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -308,6 +339,97 @@ class Game
                 $log->setGame(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|KotCardGame[]
+     */
+    public function getKotCards(): Collection
+    {
+        return $this->kotCards;
+    }
+
+    public function addKotCard(KotCardGame $kotCard): self
+    {
+        if (!$this->kotCards->contains($kotCard)) {
+            $this->kotCards[] = $kotCard;
+            $kotCard->setGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeKotCard(KotCardGame $kotCard): self
+    {
+        if ($this->kotCards->contains($kotCard)) {
+            $this->kotCards->removeElement($kotCard);
+            // set the owning side to null (unless already changed)
+            if ($kotCard->getGame() === $this) {
+                $kotCard->setGame(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getWinner(): ?Player
+    {
+        return $this->winner;
+    }
+
+    public function setWinner(?Player $winner): self
+    {
+        $this->winner = $winner;
+
+        return $this;
+    }
+
+    public function getVictoryType(): ?string
+    {
+        return $this->victoryType;
+    }
+
+    public function setVictoryType(?string $victoryType): self
+    {
+        $this->victoryType = $victoryType;
+
+        return $this;
+    }
+
+    public function getFinishedAt(): ?\DateTimeInterface
+    {
+        return $this->finishedAt;
+    }
+
+    public function setFinishedAt(?\DateTimeInterface $finishedAt): self
+    {
+        $this->finishedAt = $finishedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getStartedAt(): ?\DateTimeInterface
+    {
+        return $this->startedAt;
+    }
+
+    public function setStartedAt(?\DateTimeInterface $startedAt): self
+    {
+        $this->startedAt = $startedAt;
 
         return $this;
     }

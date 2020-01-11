@@ -49,9 +49,30 @@ class Log
      */
     private $playersHasSeen;
 
+    /**
+     * @ORM\Column(type="string", length=1000, nullable=true)
+     */
+    private $message;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\GameDataUpdate", mappedBy="log", orphanRemoval=true)
+     */
+    private $gameDataUpdates;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $nextAction;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Player", inversedBy="logsNext")
+     */
+    private $nextPlayer;
+
     public function __construct()
     {
         $this->playersHasSeen = new ArrayCollection();
+        $this->gameDataUpdates = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -134,6 +155,73 @@ class Log
                 $playersHasSeen->setLastLog(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(?string $message): self
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GameDataUpdate[]
+     */
+    public function getGameDataUpdates(): Collection
+    {
+        return $this->gameDataUpdates;
+    }
+
+    public function addGameDataUpdate(GameDataUpdate $gameDataUpdate): self
+    {
+        if (!$this->gameDataUpdates->contains($gameDataUpdate)) {
+            $this->gameDataUpdates[] = $gameDataUpdate;
+            $gameDataUpdate->setLog($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGameDataUpdate(GameDataUpdate $gameDataUpdate): self
+    {
+        if ($this->gameDataUpdates->contains($gameDataUpdate)) {
+            $this->gameDataUpdates->removeElement($gameDataUpdate);
+            // set the owning side to null (unless already changed)
+            if ($gameDataUpdate->getLog() === $this) {
+                $gameDataUpdate->setLog(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNextAction(): ?string
+    {
+        return $this->nextAction;
+    }
+
+    public function setNextAction(?string $nextAction): self
+    {
+        $this->nextAction = $nextAction;
+
+        return $this;
+    }
+
+    public function getNextPlayer(): ?Player
+    {
+        return $this->nextPlayer;
+    }
+
+    public function setNextPlayer(?Player $nextPlayer): self
+    {
+        $this->nextPlayer = $nextPlayer;
 
         return $this;
     }

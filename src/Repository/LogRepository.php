@@ -19,26 +19,22 @@ class LogRepository extends ServiceEntityRepository
         parent::__construct($registry, Log::class);
     }
 
-    public function findLastLogToDoByGame($idGame, $idPlayer)
+    public function findLogToDoByGame($idGame)
     {
         return $this->createQueryBuilder('l')
-
             ->andWhere('l.game = :val1')
             ->andWhere('l.isDone = 0')
-            ->andWhere('l.player = :val2')
             ->setParameter('val1', $idGame)
-            ->setParameter('val2', $idPlayer)
             ->orderBy('l.id', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 
     public function getNewLogs($lastLog, $idGame)
     {
         return $this->createQueryBuilder('l')
-            ->select('IDENTITY(l.player) as idPlayer, l.id as idLog, l.action as action')
+            ->select('IDENTITY(l.player) as idPlayer, l.id as idLog, l.action as action, l.message as message')
             ->andWhere('l.game = :val1')
             ->andWhere('l.isDone = 1')
             ->andWhere('l.id > :val2')
@@ -46,8 +42,7 @@ class LogRepository extends ServiceEntityRepository
             ->setParameter('val2', $lastLog)
             ->orderBy('l.id', 'ASC')
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 
     public function findFirstLog($idGame)
@@ -58,8 +53,7 @@ class LogRepository extends ServiceEntityRepository
             ->orderBy('l.id', 'ASC')
             ->setMaxResults(1)
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 
     // /**

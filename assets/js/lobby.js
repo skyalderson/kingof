@@ -43,10 +43,11 @@ $(document).ready(function () {
                         } else {
                             let html = "<div id='row_" + player.id + "' class='row justify-content-center row_player mb-2' data-playerid='" + player.id + "'>";
                             // OCCURENCE JOUEUR
-                            html = html + "<div class='col-auto text-center align-middle'><p class='text-center bg-purple lbl text-yellow mt-1 p-1'style='min-width:100px;'>Joueur " + nbHere + " :</p></div>";
-                            html = html + "<div class='col-xl-1 col-lg-1 col-md-1 text-center'><span>" + player.name + "</span></div>";
+                            html = html + "<div class='col-auto text-center align-middle'><label class='col-form-label'><span class='align-middle bg-purple lbl text-yellow text-center p-2'>Joueur " + nbHere + " :</span></label></div>";
+                            html = html + "<div class='col-xl-1 col-lg-1 col-md-1 text-center font150'><span>" + player.name + "</span></div>";
                             html = html + "<div class='col-auto'><label class='col-form-label'><span class='align-middle bg-purple lbl text-yellow text-center p-2'>Monstre :</span></label></div>";
                             html = html + "<div class='col-xl-3 col-lg-3 col-md-3'><input type='text' id='monster_" + player.id + "' name='monster_" + player.id + "' readonly='readonly' disabled='disabled' value='" + player.monster + "' class='form-control'></div>";
+                            html = html + "<div class='col-auto'><img class='img-fluid' style='max-height:4rem;' src='/img/monsters/none.png'></div>";
                             html = html + "<div class='col-xl-1 col-lg-1 col-md-1text-center'><span id='ready_" + player.id + "'>";
 
                             html = html + "<span class='badge badge-";
@@ -115,6 +116,16 @@ $(document).ready(function () {
 
     $("#lobby_monster_self").change(function () {
         selectMonster();
+
+        let imgName = "/img/monsters/";
+        if($("#lobby_monster_self").val() == 0) {
+            imgName = imgName + "none.png";
+
+        } else {
+            imgName = imgName + "to-left/regular/" + $('#opt_monster_'+$("#lobby_monster_self").val()).data("imgname");
+        }
+
+        $("#imgMonster_self").attr("src",imgName);
     });
 
     function selectMonster() {
@@ -128,6 +139,7 @@ $(document).ready(function () {
             }
         }).done(function (msg) {
             if (msg === "taken") {
+                $("#imgMonster_self").attr("src","/img/monsters/none.png");
                 $('#modal_msg').html("Ce monstre a déjà été sélectionné par un autre joueur.");
                 $('#modal').modal();
                 $("#lobby_monster_self").val("0");

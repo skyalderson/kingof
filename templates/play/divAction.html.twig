@@ -1,0 +1,27 @@
+<div class="col-12 m-0 p-0 pl-1 pr-1 order-1 order-sm-1 order-md-12">
+    <div id='divPlayContainer' class="bg-purple-light p-0 text-center rounded  border-purple align-bottom {% if nb_players <= 3 %}{% else %}mb-2{% endif %}" style="display:none; border:#000000 1px solid;">
+        <p class=" border border-dark bg-purple p-1 m-0 rounded-top text-yellow font150">
+            <span id="isplaying_label">TOUR DE</span>
+            <span id="isplaying_name">{{ playing.user.username }}</span>
+            <span id="isplaying_img" class="rounded-circle bg-white" style="display:inline-block;min-height:2.5rem;min-width:2.5rem;"><img  style="max-width:2.5rem;" src="/img/monsters/{%  if playing.incity %}to-right{% else %}to-left{% endif %}/regular/{{ playing.monster.imgname }}"></span>
+            <button class="btn btn-light" id="yo">refresh</button>
+        </p>
+        <div id='playGlobal' class="row m-0 p-2 {% if hasAction ==1 %}bg-orange{% endif %} align-items-center">
+            <div class='col-12 text-yellow text-center font150' id="playBody" >
+                {% autoescape true %}
+                    {{ playDiv.playBody|raw }}
+                {% endautoescape %}
+            </div>
+            <div class='col-12 text-center mt-1'>
+                    <span id="playBtn">
+                    {% if playDiv.playBtn is not null %}
+                        <button id='playBtnContent' class='btn btn-danger playBtn' value='1'>{{ playDiv.playBtn }}</button>
+                    {% endif %}
+                    {% if playDiv.playBtn2 is not null %}
+                        <button id='playBtnContent2' class='btn btn-danger playBtn' value='2'>{{ playDiv.playBtn2 }}</button>
+                    {% endif %}
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>

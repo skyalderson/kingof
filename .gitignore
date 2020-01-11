@@ -10,6 +10,7 @@
 /resources/
 /.idea/
 /src/Migrations/
+start_game.sql
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###

@@ -58,7 +58,7 @@ class Player
     /**
      * @ORM\Column(type="smallint")
      */
-    private $gp;
+    private $vp;
 
     /**
      * @ORM\Column(type="smallint")
@@ -105,19 +105,78 @@ class Player
      */
     private $lastLog;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ThrowTokyoDice", mappedBy="player", orphanRemoval=true)
+     */
+    private $throwTokyoDices;
+
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $throwsLeft;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ResolveOrder", mappedBy="player", orphanRemoval=true)
+     */
+    private $resolveOrders;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\GameDataUpdate", mappedBy="player")
+     */
+    private $gameDataUpdates;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Log", mappedBy="nextPlayer")
+     */
+    private $logsNext;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $hasDecidedAboutTokyo;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\KotCardGame", mappedBy="player")
+     */
+    private $kotCards;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Game", mappedBy="winner")
+     */
+    private $gamesWon;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isWinner;
+
     public function __construct()
     {
         $this->isReady = false;
-        $this->isAlive = true;  
+        $this->isAlive = true;
         $this->inCity = 0;
-        $this->gp = 0;   
-        $this->hp = 10;   
-        $this->hpMax = 10;   
-        $this->nbDices = 6; 
-        $this->nbMana = 0;   
-        $this->turn = 0;   
+        $this->vp = 0;
+        $this->hp = 10;
+        $this->hpMax = 10;
+        $this->nbDices = 6;
+        $this->nbMana = 0;
+        $this->turn = 0;
         $this->isPlaying = false;
-        $this->logs = new ArrayCollection();     
+        $this->throwsLeft = 3;
+        $this->hasDecidedAboutTokyo = false;
+        $this->lastLog = null;
+        $this->logs = new ArrayCollection();
+        $this->throwTokyoDices = new ArrayCollection();
+        $this->resolveOrders = new ArrayCollection();
+        $this->gameDataUpdates = new ArrayCollection();
+        $this->logsNext = new ArrayCollection();
+        $this->kotCards = new ArrayCollection();
+        $this->gamesWon = new ArrayCollection();
+    }
+
+    public function getName(): ?string
+    {
+        return $this->getUser()->getUsername();
     }
 
     public function getId(): ?int
@@ -209,14 +268,14 @@ class Player
         return $this;
     }
 
-    public function getGp(): ?int
+    public function getVp(): ?int
     {
-        return $this->gp;
+        return $this->vp;
     }
 
-    public function setGp(int $gp): self
+    public function setVp(int $vp): self
     {
-        $this->gp = $gp;
+        $this->vp = $vp;
 
         return $this;
     }
@@ -344,6 +403,228 @@ class Player
     public function setLastLog(?Log $LastLog): self
     {
         $this->lastLog = $LastLog;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ThrowTokyoDice[]
+     */
+    public function getThrowTokyoDices(): Collection
+    {
+        return $this->throwTokyoDices;
+    }
+
+    public function addThrowTokyoDice(ThrowTokyoDice $throwTokyoDice): self
+    {
+        if (!$this->throwTokyoDices->contains($throwTokyoDice)) {
+            $this->throwTokyoDices[] = $throwTokyoDice;
+            $throwTokyoDice->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeThrowTokyoDice(ThrowTokyoDice $throwTokyoDice): self
+    {
+        if ($this->throwTokyoDices->contains($throwTokyoDice)) {
+            $this->throwTokyoDices->removeElement($throwTokyoDice);
+            // set the owning side to null (unless already changed)
+            if ($throwTokyoDice->getPlayer() === $this) {
+                $throwTokyoDice->setPlayer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getThrowsLeft(): ?int
+    {
+        return $this->throwsLeft;
+    }
+
+    public function setThrowsLeft(?int $throwsLeft): self
+    {
+        $this->throwsLeft = $throwsLeft;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ResolveOrder[]
+     */
+    public function getResolveOrders(): Collection
+    {
+        return $this->resolveOrders;
+    }
+
+    public function addResolveOrder(ResolveOrder $resolveOrder): self
+    {
+        if (!$this->resolveOrders->contains($resolveOrder)) {
+            $this->resolveOrders[] = $resolveOrder;
+            $resolveOrder->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeResolveOrder(ResolveOrder $resolveOrder): self
+    {
+        if ($this->resolveOrders->contains($resolveOrder)) {
+            $this->resolveOrders->removeElement($resolveOrder);
+            // set the owning side to null (unless already changed)
+            if ($resolveOrder->getPlayer() === $this) {
+                $resolveOrder->setPlayer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GameDataUpdate[]
+     */
+    public function getGameDataUpdates(): Collection
+    {
+        return $this->gameDataUpdates;
+    }
+
+    public function addGameDataUpdate(GameDataUpdate $gameDataUpdate): self
+    {
+        if (!$this->gameDataUpdates->contains($gameDataUpdate)) {
+            $this->gameDataUpdates[] = $gameDataUpdate;
+            $gameDataUpdate->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGameDataUpdate(GameDataUpdate $gameDataUpdate): self
+    {
+        if ($this->gameDataUpdates->contains($gameDataUpdate)) {
+            $this->gameDataUpdates->removeElement($gameDataUpdate);
+            // set the owning side to null (unless already changed)
+            if ($gameDataUpdate->getPlayer() === $this) {
+                $gameDataUpdate->setPlayer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Log[]
+     */
+    public function getLogsNext(): Collection
+    {
+        return $this->logsNext;
+    }
+
+    public function addLogsNext(Log $logsNext): self
+    {
+        if (!$this->logsNext->contains($logsNext)) {
+            $this->logsNext[] = $logsNext;
+            $logsNext->setNextPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLogsNext(Log $logsNext): self
+    {
+        if ($this->logsNext->contains($logsNext)) {
+            $this->logsNext->removeElement($logsNext);
+            // set the owning side to null (unless already changed)
+            if ($logsNext->getNextPlayer() === $this) {
+                $logsNext->setNextPlayer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getHasDecidedAboutTokyo(): ?bool
+    {
+        return $this->hasDecidedAboutTokyo;
+    }
+
+    public function setHasDecidedAboutTokyo(?bool $hasDecidedAboutTokyo): self
+    {
+        $this->hasDecidedAboutTokyo = $hasDecidedAboutTokyo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|KotCardGame[]
+     */
+    public function getKotCards(): Collection
+    {
+        return $this->kotCards;
+    }
+
+    public function addKotCard(KotCardGame $kotCard): self
+    {
+        if (!$this->kotCards->contains($kotCard)) {
+            $this->kotCards[] = $kotCard;
+            $kotCard->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeKotCard(KotCardGame $kotCard): self
+    {
+        if ($this->kotCards->contains($kotCard)) {
+            $this->kotCards->removeElement($kotCard);
+            // set the owning side to null (unless already changed)
+            if ($kotCard->getPlayer() === $this) {
+                $kotCard->setPlayer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Game[]
+     */
+    public function getGamesWon(): Collection
+    {
+        return $this->gamesWon;
+    }
+
+    public function addGamesWon(Game $gamesWon): self
+    {
+        if (!$this->gamesWon->contains($gamesWon)) {
+            $this->gamesWon[] = $gamesWon;
+            $gamesWon->setWinner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGamesWon(Game $gamesWon): self
+    {
+        if ($this->gamesWon->contains($gamesWon)) {
+            $this->gamesWon->removeElement($gamesWon);
+            // set the owning side to null (unless already changed)
+            if ($gamesWon->getWinner() === $this) {
+                $gamesWon->setWinner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getIsWinner(): ?bool
+    {
+        return $this->isWinner;
+    }
+
+    public function setIsWinner(?bool $isWinner): self
+    {
+        $this->isWinner = $isWinner;
 
         return $this;
     }

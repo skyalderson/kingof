@@ -1,15 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ game.name }}{% endblock %}
+{% block title %}Lobby - {{ game.name }}{% endblock %}
 
 {% block body %}
 
 <!--p>TODO : </p>
 <ul>
-    <li>largeur colonnes selon résolution</li>
-    <li> SELECTION ALEATOIRE !!! </li>
     <li>lancer la partie (vérif tout le monde a un monstre / tout le monde est prêt)</li>
-    <li>largeur label joueur</li>
 </ul-->
 
 
@@ -26,13 +23,15 @@
   </div>
 </div>
 
-<div  class="jumbotron goodgirl mr-3 ml-3 mb-0 pt-3 pb-3 mt-2">
+
+
+<div  class="jumbotron goodgirl bg-purple-light mr-3 ml-3 mb-0 pt-3 pb-3 mt-2">
     <div class="row justify-content-center text-center mb-4">
         <h3 class="
         {% if app.user == game.creatoruser %}
-            col-xl-8 col-lg-8 col-md-8
+            col-xl-9 col-lg-8 col-md-8
         {% else %}
-            col-xl-7 col-lg-7 col-md-7
+            col-xl-8 col-lg-7 col-md-7
         {% endif %}
          bg-purple lbl text-yellow text-center p-2">{{ game.name }}
             {% if app.user == game.creatoruser %}
@@ -45,30 +44,45 @@
     <form  name="lobby" method="post">
     <div id="list">
     {% for player_inlist in game.players %}
-        <div id="row_{{ player_inlist.id }}" class="row justify-content-center row_player mb-2" data-playerid="{{ player_inlist.id }}">
-            <div class="col-auto text-center align-middle"><p class="text-center bg-purple lbl text-yellow mt-1 p-1" style="min-width:100px;">Joueur {{ loop.index }} :</p></div>
-            <div class="col-xl-1 col-lg-1 col-md-1 text-center mt-1"><span class="">{{ player_inlist.user.username }}</span></div>
-            <div class="col-auto"><label class="col-form-label"><span class="align-middle bg-purple lbl text-yellow text-center p-2">Monstre :</span></label></div>
+        <div id="row_{{ player_inlist.id }}" class="row justify-content-center align-items-center row_player mb-2" data-playerid="{{ player_inlist.id }}">
+            <div class="col-auto text-center align-middle">
+                <label class="col-form-label">
+                    <span class="align-middle bg-purple lbl text-yellow text-center p-2">Joueur {{ loop.index }} :</span>
+                </label>
+
+            </div>
+            <div class="col-xl-1 col-lg-1 col-md-1 text-center mt-1">
+                <span class="font150">{{ player_inlist.user.username }}</span>
+            </div>
+            <div class="col-auto">
+                <label class="col-form-label">
+                    <span class="align-middle bg-purple lbl text-yellow text-center p-2">Monstre :</span>
+                </label>
+            </div>
             {% if app.user == player_inlist.user %}
                 
                 <div class="col-xl-3 col-lg-3 col-md-3">
-                    
-                    <select id="lobby_monster_self" name="lobby[monster]" required="required" class="form-control custom-select">
+                          <select id="lobby_monster_self" name="lobby[monster]" required="required" class="form-control custom-select">
                         <option value="0" selected="selected">Choisissez votre monstre</option>
                         {% for monster in form.monster.vars.choices %}
-                            <option value="{{ monster.value }}" {% if player_inlist.monster != null and player_inlist.monster.id == monster.value %}selected{% endif %}>{{ monster.label }}</option>
+
+                            <option id='opt_monster_{{ monster.value }}' data-imgname="{{ monster.data.imgName }}" class="opt_monster" value="{{ monster.value }}" {% if player_inlist.monster != null and player_inlist.monster.id == monster.value %}selected{% endif %}>{{ monster.label }}</option>
                         {% endfor %}
                     </select>
                 </div>
+                <div class="col-auto">
+                    <img id='imgMonster_self' class='img-fluid' style='max-height:4rem;' src="/img/monsters/{% if player_inlist.monster == null %}none.png{% else %}to-left/regular/{{ player_inlist.monster.imgName}}{% endif %}">
+                </div>
                 <div class="col-xl-1 col-lg-1 col-md-1 text-center pl-3">
                     <input type="checkbox" id="lobby_ready_self" name="lobby[ready][{{ player_inlist.id}}]" data-width="110" data-toggle="toggle" data-on="Prêt !" data-off="Prêt ?" data-onstyle="success" data-offstyle="danger" {% if player_inlist.isready == false %}{% else %}checked{% endif %}/>
-                </div>  
-                <div>
                 </div>
                 <div id="data" data-gameid="{{ game.id }}" data-playerid="{{ player.id }}" data-playeruserid="{{ player.user.id }}" data-creatorid="{{ game.creatoruser.id }}" display="none"></div>
             {% else %}
                 <div class="col-xl-3 col-lg-3 col-md-3">                   
                     <input type="text" id="monster_{{ player_inlist.id}}" name="monster_{{ player_inlist.id}}" readonly='readonly' disabled='disabled' value="{% if player_inlist.monster == null %}Aucun monstre sélectionné{% else %}{{ player_inlist.monster.name}}{% endif %}" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <img class='img-fluid' id='imgMonster_{{ player_inlist.id}}' style='max-height:4rem;' src="/img/monsters/{% if player_inlist.monster == null %}none.png{% else %}to-left/regular/{{ player_inlist.monster.imgName}}{% endif %}">
                 </div>
                 <div class="col-xl-1 col-lg-1 col-md-1 text-center align-middle">
                     <span id='ready_{{ player_inlist.id}}' >
