@@ -116,18 +116,14 @@ class GameType extends AbstractType
                     $_return['checked'] = true;
                     $_return['disabled'] = (1 == $monster->getAvailable()) ? false : true;
                     if (false == $monster->getAvailable()) {
-                        $_return["class"] = 'monster_notav';
+                        $_return['class'] = 'monster_notav';
                         $_return['disabled'] = true;
-                    }
-                    else {
+                    } else {
                         $_return['disabled'] = false;
-                        $_return["class"] = '';
+                        $_return['class'] = '';
                     }
-
 
                     return $_return;
-
-
                 },
                 'group_by' => function ($monster) {
                     return $monster->getBox()->getBoxType()->getName();

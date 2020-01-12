@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class GameController extends AbstractController
+class GameCreationController extends AbstractController
 {
     /**
      * @Route("/game/create", name="game.create")
@@ -227,6 +227,7 @@ class GameController extends AbstractController
      * @Route("/lobby/launch", name="lobby.launch", methods={"POST"})
      *
      * @return Response
+     *
      * @throws Exception
      */
     public function launchGame(Request $req, GameRepository $gameRepo, PlayerRepository $playerRepo, KotCardRepository $kotCardRepo)
@@ -267,20 +268,22 @@ class GameController extends AbstractController
             $_cards = $kotCardRepo->findAll();
             $i = 0;
             foreach ($_cards as $card) {
-                $_cardGame[$i] = new KotCardGame();
-                $_cardGame[$i]->setGame($game);
-                $_cardGame[$i]->setKotCard($card);
-                $_cardGame[$i]->setState('pioche');
-                $em->persist($_cardGame[$i]);
-                ++$i;
-
-                if (15 === $card->getId() || 62 === $card->getId()) {
+                if (true === $card->getAvailable()) {
                     $_cardGame[$i] = new KotCardGame();
                     $_cardGame[$i]->setGame($game);
                     $_cardGame[$i]->setKotCard($card);
                     $_cardGame[$i]->setState('pioche');
                     $em->persist($_cardGame[$i]);
                     ++$i;
+
+                    if (15 === $card->getId() || 62 === $card->getId()) {
+                        $_cardGame[$i] = new KotCardGame();
+                        $_cardGame[$i]->setGame($game);
+                        $_cardGame[$i]->setKotCard($card);
+                        $_cardGame[$i]->setState('pioche');
+                        $em->persist($_cardGame[$i]);
+                        ++$i;
+                    }
                 }
             }
             $em->flush();
@@ -293,7 +296,7 @@ class GameController extends AbstractController
             $k = 1;
             foreach ($_randomCards as $randomCard) {
                 $_cardGame[$randomCard]->setState('achat');
-                $_cardGame[$randomCard]-> setPosition($k);
+                $_cardGame[$randomCard]->setPosition($k);
                 ++$k;
             }
             $em->flush();

@@ -10,7 +10,7 @@ $(document).ready(function () {
     // * Activer la boucle d'update si joueur passif
 
     $('.log_detail').each(function(){
-        $(this).html(displayImg($(this).html(), 1));
+        $(this).html(displayImg($(this).html(), 1.2));
         $(this).html(displayNameInLog($(this).html()));
     });
 
@@ -43,9 +43,9 @@ $(document).ready(function () {
     function updateDisplay(data)
     {
         if(data.logs !== null) {
+            displayGameData(data.gameData);
             displayActionToDo(data.action);
             displayLogs(data.logs);
-            displayGameData(data.gameData);
         }
 
         if(data.hasActionToDo === true) {
@@ -54,6 +54,10 @@ $(document).ready(function () {
         else {
             activeLoop = true;
         }
+
+        resizeLogDiv();
+        resizeLogAction();
+        resizeButtons();
     }
 
 
@@ -69,7 +73,6 @@ $(document).ready(function () {
 
         }).done(function (response) {
             let data = JSON.parse(response);
-            console.log(data);
             updateDisplay(data);
         })
     }
@@ -96,8 +99,6 @@ $(document).ready(function () {
                 break;
         }
 
-        console.log(data);
-
         $('#playBody').html('');
         $('#playBtn').html('');
         let htmlBody ='<div class="spinner-grow spinner-grow-xl text-dark" role="status" style="min-height:100%"><span class="sr-only "></span></div>';
@@ -115,7 +116,6 @@ $(document).ready(function () {
 
         }).done(function (response) {
             let data = JSON.parse(response);
-            console.log(data);
             updateDisplay(data);
         })
     }
@@ -265,20 +265,6 @@ $(document).ready(function () {
         })
     }
 
-    /* function hasActionToDo()
-    {
-        $.ajax({
-            url: "/play/hasActionToDo",
-            method: "post",
-            async: false,
-        }).done(function (msg) {
-            let hasAction = JSON.parse(msg);
-
-        })
-    } */
-
-
-
     function displayActionToDo(action)
     {
         $('#playBody').html(displayImg(action.playBody, 1.5));
@@ -332,7 +318,7 @@ $(document).ready(function () {
 
     function displayNewLog(idLog, htmlContentLog)
     {
-        htmlContentLog = displayImg(htmlContentLog, 1);
+        htmlContentLog = displayImg(htmlContentLog, 1.2);
         htmlContentLog = displayNameInLog(htmlContentLog);
         $('#divLog').append("<div class='log_detail border border-dark bg-purple-medium p-1 pl-2 pr-2 m-0 text-left'>"+htmlContentLog+"</div>");
     }
@@ -380,11 +366,11 @@ $(document).ready(function () {
         }
 
         heightToDisplay = heightToDisplay - $('#divLogTitle').outerHeight();
-        console.log('$divLogTitle '+$('#divLogTitle').outerHeight()+' px');
-
         $('#divLog').css("min-height", heightToDisplay+'px');
         $('#divLog').css("max-height", heightToDisplay+'px');
         $('#divLog').show();
+
+
     }
 
     function moveCursorLogDiv()
@@ -401,14 +387,19 @@ $(document).ready(function () {
             //let pbPiocheDiv = $('#piocheDiv').css('padding-bottom');
             //pbPiocheDiv = parseFloat(pbPiocheDiv);
 
-            //let mtDivPlayContainer = $('#divPlayContainer').css('margin-top');
-            //mtDivPlayContainer = parseFloat(mtDivPlayContainer);
+            //let mtDivPlayGlobal = $('#divPlayGlobal').css('margin-top');
+            //mtDivPlayGlobal = parseFloat(mtDivPlayGlobal);
 
-            heightToDisplay = $('#centralRow').outerHeight() - $('#display_1').outerHeight();
+            let heightDisplayPlayer = 0;
+            $('.display_player').each(function() {
+                heightDisplayPlayer = $(this).outerHeight()
+            });
+
+            heightToDisplay = $('#centralRow').outerHeight() - heightDisplayPlayer;
         }
         else {
-            let mbDivPlayContainer = $('#divPlayContainer').css('margin-bottom');
-            mbDivPlayContainer = parseFloat(mbDivPlayContainer);
+            let mbDivPlayGlobal = $('#divPlayContainer').css('margin-bottom');
+            mbDivPlayGlobal = parseFloat(mbDivPlayGlobal);
             heightToDisplay = ($('#centralRow').outerHeight() / 2);
         }
 

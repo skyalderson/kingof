@@ -409,6 +409,16 @@ class GameDisplayService
         $colRight = floor($colsEmpty / 2);
 
         foreach ($_dicesByType as $type => $faces) {
+            $nbDices = 0;
+            foreach ($faces as $face => $nb) {
+                for ($i = 0; $i < $nb; ++$i) {
+                    ++$nbDices;
+                }
+            }
+            if (0 === $nbDices) {
+                continue;
+            }
+
             $_dataDivAction['playBody'] .= "<div class='row p-0 m-0 text-center'>";
 
             $_dataDivAction['playBody'] .= "<div class='col-$colLeft m-0 p-0'></div>";

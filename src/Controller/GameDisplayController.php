@@ -67,6 +67,18 @@ class GameDisplayController extends AbstractController
             }
         }
 
+        $_cards = $game->getKotCards();
+        foreach ($_cards as $card) {
+            switch ($card->getState()) {
+                case 'achat':
+                    $cards['achat'][$card->getPosition()] = $card;
+                    break;
+                case 'player':
+                    $cards['player'][$card->getPlayer()->getId()][] = $card;
+                    break;
+            }
+        }
+
         return $this->render('play/index.html.twig', [
             'game' => $game,
             'players_by_order' => $playersByOrder,
@@ -75,6 +87,7 @@ class GameDisplayController extends AbstractController
             'playDiv' => $playDiv,
             'hasAction' => $hasAction,
             'nameAction' => $nameAction,
+            'cards' => $cards,
         ]);
     }
 

@@ -5,8 +5,10 @@
 {% block body %}
     <div class="jumbotron goodgirl mr-3 ml-3 mb-0 pt-0 pb-0 mt-2 bg-purple-light text-yellow" style="max-height:90vh">
         <div class="row no-gutter">
-            <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
-            <div class="col-md-8 col-lg-6">
+            <div class="col-6">
+                <img class="'img-fluid" src="{{ asset('img/box.png') }}" style="max-height:90vh;">
+            </div>
+            <div class="col-6">
                 <div class="login d-flex align-items-center py-5">
                     <div class="container">
                         <div class="row">
@@ -24,17 +26,18 @@
                                     {% endif %}
                                     <div class="form-label-group-login">
                                         <input type="text" id="inputUsername" name="username" class="form-control" value="{{ last_username }}" required autofocus>
-                                        <!--label for="inputUsername">Email address</label-->
+                                        <label class='text-black' for="inputUsername">Nom d'utilisateur</label>
                                     </div>
 
                                     <div class="form-label-group-login">
                                         <input type="password" name="password" id="inputPassword" class="form-control"  required>
-                                        <!--label for="inputPassword">Password</label-->
+                                        <label class='text-black' for="inputPassword">Mot de passe</label>
                                     </div>
                                     <input type="hidden" name="_csrf_token"
                                            value="{{ csrf_token('authenticate') }}"
                                     >
-                                    <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" type="submit">Sign in</button>
+                                    <button class="btn btn-lg btn-danger btn-block btn-login text-uppercase font-weight-bold mb-2 text-white" type="submit">Se connecter</button>
+                                    <p>Pas encore de compte ? <a href='{{ path('app_register') }}' class="btn btn-login btn-sm  btn-primary text-white font75 p-1 pr-2 pl-2">S'inscrire</a></p>
                                 </form>
                             </div>
                         </div>

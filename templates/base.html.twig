@@ -31,24 +31,51 @@
                           <a class="dropdown-item goodgirl text-yellow" href="{{ path('game.list') }}">Rejoindre</a>
                         </div>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle goodgirl" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="text-yellow">Parties en cours</span>
-                        </a>
-                        <div class="dropdown-menu bg-purple" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item goodgirl text-yellow" href="{{ path('game.create') }}">Créer</a>
-                            <a class="dropdown-item goodgirl text-yellow" href="{{ path('game.list') }}">Rejoindre</a>
-                        </div>
-                    </li>
-                    <!--li class="nav-item">
-                      <a class="goodgirl text-yellow nav-link " href="#">REGLES</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="goodgirl text-yellow nav-link " href="#">CLASSEMENT</a>
-                    </li-->
-                </ul>
 
-                
+                    {% if app.user %}
+                        {% set nb_games = 0 %}
+                        {% set nb_games_waiting = 0 %}
+                        {% set nb_games_playing = 0 %}
+                        {% for p in app.user.players %}
+                            {% if p.game.state == 1 or p.game.state == 2 %}
+                                {%  set nb_games = nb_games+1 %}
+                                {% if p.game.state == 1 %}
+                                    {%  set nb_games_waiting = nb_games_waiting+1 %}
+                                {% endif %}
+                                {% if p.game.state == 2 %}
+                                    {%  set nb_games_playing = nb_games_playing+1 %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if nb_games > 0 %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle goodgirl" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="text-yellow">Parties en cours</span>
+                                </a>
+                                <div class="dropdown-menu bg-purple" aria-labelledby="navbarDropdown">
+                                    {% if nb_games_waiting > 0 %}
+                                        <p class="p-0 m-0 text-yellow">Parties en attente</p>
+                                        {% for p in app.user.players %}
+                                            {% if p.game.state == 1 %}<a class="dropdown-item goodgirl text-yellow" href="{{ path('game.lobby', { 'id': p.game.id }) }}">{{ p.game.name }}</a>{% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                    {% if nb_games_playing > 0 and nb_games_waiting > 0 %}<div class="dropdown-divider"></div>{% endif %}
+                                    {% if nb_games_playing > 0 %}
+                                        <p class="p-0 m-0 text-yellow">Parties en cours</p>
+                                        {% for p in app.user.players %}
+                                            {% if p.game.state == 2 %}<a class="dropdown-item goodgirl text-yellow" href="{{ path('play', { 'id': p.game.id }) }}">{{ p.game.name }}</a>{% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                    <li class="nav-item">
+                      <a class="goodgirl text-yellow nav-link " href="{{ path('rules') }}">Règles</a>
+                    </li>
+
+                </ul>
 
                 <div class="form-inline my-2 my-lg-0">
                   <ul class="navbar-nav mr-auto">
@@ -75,15 +102,13 @@
                 </div>
               </div>
             </nav>
-            
-        {% block body %}{% endblock %}
+
+
+      {% block body %}{% endblock %}
 
       {{ encore_entry_script_tags('app') }}
       {{ encore_entry_script_tags('bootstrap4-toggle') }}
-        {% block javascripts %} 
-           
-        {% endblock %}
-       
-        
+
+      {% block javascripts %}{% endblock %}
     </body>
 </html>

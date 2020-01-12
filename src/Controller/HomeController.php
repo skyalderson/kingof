@@ -29,4 +29,19 @@ class HomeController extends AbstractController
         ]);
         //}
     }
+
+    /**
+     * @Route("/rules", name="rules")
+     */
+    public function rules()
+    {
+        /*$idGame = $this->playService->hasGame($this->getUser());
+        if (0 != $idGame) {
+            $this->redirectToRoute('play', $idGame);
+        } else {*/
+        return $this->render('rules/index.html.twig', [
+
+        ]);
+        //}
+    }
 }

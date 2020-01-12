@@ -27,17 +27,13 @@
                 </div>
                 <div class="col-sm-3 col-md-12 col-lg-12 col-xl-12 p-0 m-0">
                     <div class="row m-0">
-                        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3 m-0 pt-1 pl-0 pr-1 pb-0">
-                            <img class="img-fluid border border-dark rounded" src="/img/cards/kot/la-petite-boutique-du-coin.png"/>
-                        </div>
-                        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3 m-0 pt-1 pl-0 pr-1 pb-0">
-                            <img class="img-fluid border border-dark rounded" src="/img/cards/kot/lance-flammes.png"/>
-                        </div>
-                        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3 m-0 pt-1 pl-0 pr-1 pb-0">
-                            <img class="img-fluid border border-dark rounded" src="/img/cards/kot/garde-nationale.png"/>
-                        </div>
+                        {% for card in cards.achat %}
+                            <div id='card_achat_{{ card.position }}' class="col-sm-12 col-md-3 col-lg-3 col-xl-3 m-0 pt-1 pl-0 pr-1 pb-0">
+                                <img class="img-fluid border border-dark rounded-card" src="/img/cards/kot/{{ card.kotCard.imgName }}"/>
+                            </div>
+                        {% endfor %}
                         <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3 m-0 pt-1 pl-0 pr-1 pb-0" id='piocheDiv' >
-                            <img class="img-fluid border border-dark rounded" src="/img/cards/kot/card_verso.png"/>
+                            <img class="img-fluid border border-dark rounded-card" src="/img/cards/kot/card_verso.png"/>
                         </div>
                     </div>
                 </div>

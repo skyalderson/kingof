@@ -5,15 +5,15 @@
 
 @font-face {
     font-family: 'goodgirlregular';
-    src: url('/fonts/goodgirl-webfont.eot');
+    src: url('/fonts/GoodGirl.eot');
     }
 
 @font-face {
     font-family: 'goodgirlregular';
-    src: url('/fonts/goodgirl-webfont.woff2') format('woff2'),
-         url('/fonts/goodgirl-webfont.woff') format('woff'),
-         url('/fonts/goodgirl-webfont.ttf') format('truetype'),
-         url('/fonts/goodgirl-webfont.svg#goodgirlregular') format('svg');
+    src: url('/fonts/GoodGirl.woff2') format('woff2'),
+         url('/fonts/GoodGirl.woff') format('woff'),
+         url('/fonts/GoodGirl.ttf') format('truetype'),
+         url('/fonts/GoodGirl.svg#goodgirlregular') format('svg');
 }
 
 
@@ -24,7 +24,8 @@ button.bg-purple:focus {
   background-color: #1d2124 !important;
 }
 
-
+.text-black{ color: black;
+text-shadow: none;}
   
 .text-white{
     color: white;
@@ -57,6 +58,7 @@ text-shadow:
 .font150{font-size: 150%;}
 .font75{font-size: 75%;}
 .lbl{border-radius:5px;}
+.rounded-card{border-radius:7% / 5%;}
 
 .bg-purple-light{background-color: #dad4f7;}
 .bg-purple-medium{background-color: #b5a9ef;}
@@ -69,7 +71,7 @@ text-shadow:
 .pad-1{padding:1px;}
 .goodgirl {font-family: 'goodgirlregular', Arial, sans-serif; }
 
-.img-in-city{filter: sepia(100%) grayscale(100%);}
+.img-in-city{filter: sepia(100%) grayscale(100%) opacity(50%) ;}
 .img-dead{filter: grayscale(100%)}
 
 
@@ -287,7 +289,6 @@ input:checked + .slider_2:before {
     margin-bottom: 0;
     /* Override default `<label>` margin */
     line-height: 1.5;
-    color: #495057;
     cursor: text;
     /* Match the input under the label */
     border: 1px solid transparent;
@@ -324,7 +325,6 @@ input:checked + .slider_2:before {
     padding-top: calc(var(--input-padding-y) / 3);
     padding-bottom: calc(var(--input-padding-y) / 3);
     font-size: 12px;
-    color: #777;
 }
 
 /* Fallback for Edge
@@ -335,7 +335,6 @@ input:checked + .slider_2:before {
         display: none;
     }
     .form-label-group-login input::-ms-input-placeholder {
-        color: #777;
     }
 }
 
@@ -348,7 +347,6 @@ input:checked + .slider_2:before {
         display: none;
     }
     .form-label-group-login input:-ms-input-placeholder {
-        color: #777;
     }
 }
 

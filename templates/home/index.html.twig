@@ -1,12 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<div  class="jumbotron bg-purple-light goodgirl text-yellow mt-1 mb-1 ml-3 mr-3 p-0 text-center">
-    <div class="row m-0 p-0 text-center">
-        <div class="col-3 m-0 p-0">
-            <img src="{{ asset('img/logo.png') }}" class="img-fluid p-3">
+<div  class="jumbotron bg-purple-light goodgirl text-yellow mt-2 mb-1 ml-3 mr-3 p-0 text-center">
+    <div class="row text-center">
+        <div class="col-4">
+            <img src="{{ asset('img/logo.png') }}" class="img-fluid p-0 mt-2 ml-3 mb-1" style="max-height:37vh">
+            <div class="embed-responsive embed-responsive-4by3 p-0 mt-2 ml-3" style="max-height:50vh">
+                <iframe src="https://www.youtube-nocookie.com/embed/s5EqOFZNXts" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
         </div>
-        <div class="col-9 m-0 p-0">
+        <div class="col-8 mb-2">
             <img src="{{ asset('img/home.png') }}" class="img-fluid" style="max-height:90vh;">
         </div>
     </div>

@@ -38,6 +38,11 @@ class KotCard
      */
     private $imgName;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $available;
+
     public function __construct()
     {
         $this->kotCardGames = new ArrayCollection();
@@ -92,6 +97,18 @@ class KotCard
     public function setImgName(string $imgName): self
     {
         $this->imgName = $imgName;
+
+        return $this;
+    }
+
+    public function getAvailable(): ?bool
+    {
+        return $this->available;
+    }
+
+    public function setAvailable(?bool $available): self
+    {
+        $this->available = $available;
 
         return $this;
     }

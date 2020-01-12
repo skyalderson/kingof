@@ -418,9 +418,6 @@ class GamePlayService
             case 'throw_dices':
                 $logDone->setMessage($this->getHTMLContentLog($nameAction, $playerAction));
 
-                // Vérification de la prochaine action :
-                // * Résoudre les dész si il n'y a plus de lancers restants OU si tous les dés sont conservés
-                // * Sinon : Relancer les dés
                 $areAllKept = false;
                 if (isset($data) && is_array($data)) {
                     $areAllKept = true;
@@ -437,7 +434,44 @@ class GamePlayService
                 if ($playerAction->getThrowsLeft() > 0 && !$areAllKept) {
                     $nextAction = 'throw_dices';
                 } else {
-                    $nextAction = 'resolve_order_dices';
+                    $_dicesByType['victory'] = 0;
+                    $_dicesByType['heart'] = 0;
+                    $_dicesByType['flash'] = 0;
+                    $_dicesByType['paw'] = 0;
+
+                    $_dices = $playerAction->getThrowTokyoDices();
+                    foreach ($_dices as $dice) {
+                        ++$_dicesByType[$dice->getType()];
+                    }
+
+                    foreach ($_dicesByType as $type => $nb) {
+                        if (0 === $nb) {
+                            unset($_dicesByType[$type]);
+                        } else {
+                            $uniqueRsolve = $type;
+                        }
+                    }
+
+                    if (count($_dicesByType) > 1) {
+                        $nextAction = 'resolve_order_dices';
+                    } else {
+                        $_resolveOrders = $playerAction->getResolveOrders();
+                        foreach ($_resolveOrders as $resolveOrder) {
+                            $playerAction->removeResolveOrder($resolveOrder);
+                        }
+
+                        foreach ($_dicesByType as $type => $d) {
+                            $_resolveOrder[1] = new ResolveOrder();
+                            $_resolveOrder[1]->setPlayer($playerAction);
+                            $_resolveOrder[1]->setResolveOrder(1);
+                            $_resolveOrder[1]->setType($type);
+
+                            $this->em->persist($_resolveOrder[1]);
+                        }
+
+                        $this->em->persist($_resolveOrder[1]);
+                        $nextAction = 'resolve_dices_'.$uniqueRsolve;
+                    }
                 }
 
                 $nextLog->setAction($nextAction);
@@ -556,25 +590,26 @@ class GamePlayService
                     }
                 }
 
-                if (0 != $nbDeadPlayers) {
+                if (0 !== $nbDeadPlayers) {
                     $nextAction = 'are_dead';
                     $nextPlayer = $playerAction;
 
-                    if (0 != $nbAttackedInTokyo) {
+                    if (0 !== $nbAttackedInTokyo) {
                         $secondAction = 'ask_to_leave_tokyo';
                         $secondPlayer = $_playersInTokyo[0];
                     } else {
                         $secondAction = $this->getNextResolve($playerAction, 'paw');
-                        if (!$secondAction) {
-                            $nextAction = $this->getNextActionAfterResolve($playerAction);
-                        }
-                        if ('start_turn' == $nextAction) {
-                            $nextPlayer = $this->findNextPlayer($game, $playerAction);
-                        }
                         $secondPlayer = $playerAction;
+                        if (!$secondAction) {
+                            $secondAction = $this->getNextActionAfterResolve($playerAction);
+                        }
+                        if ('start_turn' == $secondAction) {
+                            $secondPlayer = $this->findNextPlayer($game, $playerAction);
+                        }
+
                     }
                 } else {
-                    if (0 != $nbAttackedInTokyo) {
+                    if (0 !== $nbAttackedInTokyo) {
                         $nextAction = 'ask_to_leave_tokyo';
                         $nextPlayer = $_playersInTokyo[0];
                     } else {
@@ -589,14 +624,15 @@ class GamePlayService
                     }
                 }
 
+                $logDone->setMessage($this->getHTMLContentLog($nameAction, $playerAction));
+
                 $nextLog->setAction($nextAction);
                 $nextLog->setPlayer($nextPlayer);
                 $nextLog->setNextAction($secondAction);
                 $nextLog->setNextPlayer($secondPlayer);
 
-                $this->prepareNextAction($nextLog);
 
-                $logDone->setMessage($this->getHTMLContentLog($nameAction, $playerAction));
+                $this->prepareNextAction($nextLog);
                 break;
 
             case 'are_dead':
@@ -624,7 +660,6 @@ class GamePlayService
                 $this->prepareNextAction($nextLog);
                 $logDone->setMessage($this->getHTMLContentLog($nameAction, $playerAction));
                 break;
-
 
             case 'ask_to_leave_tokyo':
                 $playerAction->setHasDecidedAboutTokyo(true);

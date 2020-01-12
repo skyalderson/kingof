@@ -84,7 +84,7 @@ class KotCardGame
         return $this;
     }
 
-    public function getState(): ?int
+    public function getState(): ?string
     {
         return $this->state;
     }

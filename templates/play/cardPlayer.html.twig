@@ -1,4 +1,4 @@
-<div class="card p-1 {% if player.isalive is same as (false) %}bg-gray{% elseif player.isplaying == true %}bg-orange{% else %}bg-purple{% endif %}" id="display_{{ player.id}}">
+<div class="card display_player p-1 {% if player.isalive is same as (false) %}bg-gray{% elseif player.isplaying == true %}bg-orange{% else %}bg-purple{% endif %}" id="display_{{ player.id}}">
     <div class="card-header text-center pt-0 pb-1">
         {% set uname_l = player.user.username|length %}
         {% set f_base =  1.5 %}
