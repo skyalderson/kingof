@@ -939,7 +939,7 @@ class GamePlayService
                 $game->setWinner($playerAction);
                 $game->setVictoryType('kills');
                 $game->setState(3);
-                $game->setFinishedAt(new \DateTime('now'));
+                $game->setFinishedAt(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
                 break;
 
             case 'has_won_by_victory_points':
@@ -947,7 +947,7 @@ class GamePlayService
                 $game->setWinner($playerAction);
                 $game->setVictoryType('points');
                 $game->setState(3);
-                $game->setFinishedAt(new \DateTime('now'));
+                $game->setFinishedAt(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
                 break;
         }
     }

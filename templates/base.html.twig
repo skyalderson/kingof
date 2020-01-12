@@ -7,9 +7,8 @@
         
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
-            {% endblock %}
+        {% endblock %}
 
-        <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script> 
     </head>
     <body>           
       <nav class="navbar navbar-expand-lg navbar-purple bg-purple rounded mt-1 mr-3 ml-3 pt-0 pb-0">
@@ -106,9 +105,13 @@
 
       {% block body %}{% endblock %}
 
-      {{ encore_entry_script_tags('app') }}
-      {{ encore_entry_script_tags('bootstrap4-toggle') }}
 
-      {% block javascripts %}{% endblock %}
+
+
+      {% block javascripts %}
+          {{ encore_entry_script_tags('app') }}
+          <script src="https://kit.fontawesome.com/bf25cddf00.js" crossorigin="anonymous"></script>
+          {{ encore_entry_script_tags('bootstrap4-toggle') }}
+      {% endblock %}
     </body>
 </html>

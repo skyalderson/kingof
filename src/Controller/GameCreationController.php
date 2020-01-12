@@ -37,10 +37,12 @@ class GameCreationController extends AbstractController
     public function gameCreate(ModeRepository $modeRepo, BoardRepository $boardRepo, MonsterRepository $monsterRepo)
     {
         $em = $this->getDoctrine()->getManager();
+        $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
 
         $game = new Game();
-        $game->setCreatedAt(new \DateTime('now'));
-        $game->setName('Partie de '.$this->getUser()->getUsername());
+
+        $game->setCreatedAt($now);
+        $game->setName('Partie de '.$this->getUser()->getUsername().' - '.$now->format("Y-m-d H:i"));
 
         $mode = $modeRepo->find(1);
         $game->setMode($mode);
@@ -65,7 +67,7 @@ class GameCreationController extends AbstractController
         $creator->setGame($game);
         $creator->setUser($this->getUser());
         $creator->setCreator(true);
-        $creator->setJoinedAt(new \DateTime('now'));
+        $creator->setJoinedAt($now);
 
         $em->persist($creator);
         $em->flush();
@@ -97,7 +99,7 @@ class GameCreationController extends AbstractController
             $creator->setUser($this->getUser());
             $creator->setCreator(true);
             $creator->setIsReady(false);
-            $creator->setJoinedAt(new \DateTime('now'));
+            $creator->setJoinedAt(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
 
             $em->persist($game);
             $em->persist($creator);
@@ -155,7 +157,7 @@ class GameCreationController extends AbstractController
             $player->setUser($this->getUser());
             $player->setCreator(false);
             $player->setIsReady(false);
-            $player->setJoinedAt(new \DateTime('now'));
+            $player->setJoinedAt(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($player);
@@ -238,7 +240,7 @@ class GameCreationController extends AbstractController
             $idGame = $req->get('idGame');
             $game = $gameRepo->find($idGame);
             $game->setState(2);
-            $game->setStartedAt(new \DateTime('now'));
+            $game->setStartedAt(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
 
             $log = new Log();
             $log->setGame($game);
@@ -286,7 +288,6 @@ class GameCreationController extends AbstractController
                     }
                 }
             }
-            $em->flush();
 
             for ($j = 0; $j < count($_cardGame); ++$j) {
                 $randCard[$j] = $j;
@@ -299,6 +300,12 @@ class GameCreationController extends AbstractController
                 $_cardGame[$randomCard]->setPosition($k);
                 ++$k;
             }
+
+            $_monstersAuthorized = $game->getMonstersAuthorized();
+            foreach ($_monstersAuthorized as $monsterAuthorized) {
+                $game->removeMonstersAuthorized($monsterAuthorized);
+            }
+
             $em->flush();
 
             return new Response('OK');
@@ -368,6 +375,7 @@ class GameCreationController extends AbstractController
                             $_players[$p->getId()] = [];
                             $_players[$p->getId()]['id'] = $p->getId();
                             $_players[$p->getId()]['monster'] = (null === $p->getMonster()) ? 'Aucun monstre sélectionné' : $p->getMonster()->getName();
+                            $_players[$p->getId()]['monsterImg'] = (null === $p->getMonster()) ? 'none.png' : $p->getMonster()->getImgName();
                             $_players[$p->getId()]['ready'] = $p->getIsReady();
                             $_players[$p->getId()]['name'] = $p->getUser()->getUsername();
                         } else {

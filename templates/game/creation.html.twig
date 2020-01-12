@@ -138,10 +138,7 @@
 {% endblock %}
 
 {% block javascripts %}
-
-
-{{ encore_entry_script_tags('gamecreate') }} 
-
-
+    {{ parent() }}
+    {{ encore_entry_script_tags('gamecreate') }}
 {% endblock %}
 

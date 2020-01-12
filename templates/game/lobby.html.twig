@@ -24,97 +24,100 @@
 </div>
 
 
-
 <div  class="jumbotron goodgirl bg-purple-light mr-3 ml-3 mb-0 pt-3 pb-3 mt-2">
     <div class="row justify-content-center text-center mb-4">
-        <h3 class="
-        {% if app.user == game.creatoruser %}
-            col-xl-9 col-lg-8 col-md-8
-        {% else %}
-            col-xl-8 col-lg-7 col-md-7
-        {% endif %}
-         bg-purple lbl text-yellow text-center p-2">{{ game.name }}
-            {% if app.user == game.creatoruser %}
-                <a class="btn btn-danger btn-sm mr-2" href={{ path('game.delete', { 'id': game.id }) }} style="position: absolute; display: inline; right: 0;">
-                <img src="/img/icons/trash.png" height="24px"></a>
-            {% else %}
-                <a class="btn btn-danger btn-sm mr-2" href={{ path('game.quit', { 'id': player.id }) }} style="position: absolute; display: inline; right: 0;">
-                <img src="/img/icons/quit.png" height="24px"></a>{% endif %}
-        </h3></div>
+        <div class="col-7 p-0 m-0">
+            <h4 class="col-12 bg-purple lbl text-yellow text-center m-0 p-2">{{ game.name }}
+                {% if app.user == game.creatoruser %}
+                    <a class="btn btn-danger btn-lg fas fa-trash-alt p-1" href={{ path('game.delete', { 'id': game.id }) }} style="position: absolute; display: inline; right: 0.5rem;"></a>
+                {% else %}
+                    <a class="btn btn-danger btn-lg fas fa-sign-out-alt p-1" href={{ path('game.delete', { 'id': game.id }) }} style="position: absolute; display: inline; right: 0.5rem;"></a>
+                {% endif %}
+            </h4>
+        </div>
+
+    </div>
     <form  name="lobby" method="post">
     <div id="list">
     {% for player_inlist in game.players %}
-        <div id="row_{{ player_inlist.id }}" class="row justify-content-center align-items-center row_player mb-2" data-playerid="{{ player_inlist.id }}">
-            <div class="col-auto text-center align-middle">
-                <label class="col-form-label">
-                    <span class="align-middle bg-purple lbl text-yellow text-center p-2">Joueur {{ loop.index }} :</span>
-                </label>
-
+        <div id="row_{{ player_inlist.id }}" class="row justify-content-center align-items-center row_player" data-playerid="{{ player_inlist.id }}">
+            <div class="col-1 m-0 p-0 ml-{% if app.user == game.creatoruser %}0{% else %}0{% endif %}">
+                <div class="row m-0 p-0 align-middle">
+                    <div class="col-{% if app.user == game.creatoruser %}auto{% else %}11{% endif %} m-0 p-0 text-left">
+                        <p class=" pr-2 pl-2 pt-1 pb-1 m-0 align-middle bg-purple lbl text-yellow text-center"><span class="labelName d-block">Joueur {{ loop.index }}</span></p>
+                    </div>
+                    {% if app.user == game.creatoruser and app.user != player_inlist.user %}
+                    <div class="col-auto d-inline align-middle m-0 p-0 pt-1 pl-1">
+                        <a class="btn btn-danger btn-sm fas fa-ban p-1" href={{ path('player.kick', { 'id' : player_inlist.id }) }}></a>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="col-xl-1 col-lg-1 col-md-1 text-center mt-1">
-                <span class="font150">{{ player_inlist.user.username }}</span>
+            <div class="col-1 text-center m-0 p-0  font150">
+                <p class='playerNameP m-0 p-0 pl-{% if app.user == game.creatoruser %}2{% else %}1{% endif %}' style="min-width:100%; max-width:100%"><span class='playerNameSpan m-0 p-0' style="line-height:1.5rem; font-size:1.5rem; visibility:hidden;">{{ player_inlist.user.username }}</span></p>
             </div>
-            <div class="col-auto">
+            <div class="col-1 m-0 p-0 text-center">
                 <label class="col-form-label">
-                    <span class="align-middle bg-purple lbl text-yellow text-center p-2">Monstre :</span>
+                    <span class="p-2 align-middle bg-purple lbl text-yellow text-center">Monstre</span>
                 </label>
             </div>
             {% if app.user == player_inlist.user %}
-                
-                <div class="col-xl-3 col-lg-3 col-md-3">
-                          <select id="lobby_monster_self" name="lobby[monster]" required="required" class="form-control custom-select">
-                        <option value="0" selected="selected">Choisissez votre monstre</option>
-                        {% for monster in form.monster.vars.choices %}
-
-                            <option id='opt_monster_{{ monster.value }}' data-imgname="{{ monster.data.imgName }}" class="opt_monster" value="{{ monster.value }}" {% if player_inlist.monster != null and player_inlist.monster.id == monster.value %}selected{% endif %}>{{ monster.label }}</option>
-                        {% endfor %}
-                    </select>
+                <div class="col-3 m-0 p-0">
+                    <div class="row align-items-center m-0 p-0">
+                        <div class="col-10 m-0 p-0 pr-0">
+                            <select id="lobby_monster_self" name="lobby[monster]" required="required" class="form-control custom-select">
+                                <option value="0" selected="selected">Choisissez votre monstre</option>
+                                {% for monster in form.monster.vars.choices %}
+                                    <option id='opt_monster_{{ monster.value }}' data-imgname="{{ monster.data.imgName }}" class="opt_monster" value="{{ monster.value }}" {% if player_inlist.monster != null and player_inlist.monster.id == monster.value %}selected{% endif %}>{{ monster.label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-2 m-0 p-0 pl-2">
+                            <img id='imgMonster_self' class='img-fluid rounded-circle border border-dark bg-white' style='max-height:.7;' src="/img/monsters/to-right/regular/{% if player_inlist.monster == null %}none.png{% else %}{{ player_inlist.monster.imgName}}{% endif %}">
+                        </div>
+                    </div>
                 </div>
-                <div class="col-auto">
-                    <img id='imgMonster_self' class='img-fluid' style='max-height:4rem;' src="/img/monsters/{% if player_inlist.monster == null %}none.png{% else %}to-left/regular/{{ player_inlist.monster.imgName}}{% endif %}">
-                </div>
-                <div class="col-xl-1 col-lg-1 col-md-1 text-center pl-3">
-                    <input type="checkbox" id="lobby_ready_self" name="lobby[ready][{{ player_inlist.id}}]" data-width="110" data-toggle="toggle" data-on="Prêt !" data-off="Prêt ?" data-onstyle="success" data-offstyle="danger" {% if player_inlist.isready == false %}{% else %}checked{% endif %}/>
+                <div class="col-1 text-center m-0 ml-0 p-0 pl-2">
+                    <input type="checkbox" id="lobby_ready_self" name="lobby[ready][{{ player_inlist.id}}]" data-width="115" data-toggle="toggle" data-on="Prêt !" data-off="Prêt ?" data-onstyle="success" data-offstyle="danger" {% if player_inlist.isready == false %}{% else %}checked{% endif %} style="line-height:2.5rem; font-size: 1.2rem;"/>
                 </div>
                 <div id="data" data-gameid="{{ game.id }}" data-playerid="{{ player.id }}" data-playeruserid="{{ player.user.id }}" data-creatorid="{{ game.creatoruser.id }}" display="none"></div>
             {% else %}
-                <div class="col-xl-3 col-lg-3 col-md-3">                   
-                    <input type="text" id="monster_{{ player_inlist.id}}" name="monster_{{ player_inlist.id}}" readonly='readonly' disabled='disabled' value="{% if player_inlist.monster == null %}Aucun monstre sélectionné{% else %}{{ player_inlist.monster.name}}{% endif %}" class="form-control">
+                <div class="col-3 m-0 p-0">
+                    <div class="row align-items-center m-0 p-0">
+                        <div class="col-10 m-0 p-0 01">
+                            <input type="text" id="monster_{{ player_inlist.id}}" name="monster_{{ player_inlist.id}}" readonly='readonly' disabled='disabled' value="{% if player_inlist.monster == null %}Aucun monstre sélectionné{% else %}{{ player_inlist.monster.name}}{% endif %}" class="form-control">
+                        </div>
+                        <div class="col-2 m-0 p-0 pl-2">
+                            <img class='img-fluid rounded-circle border border-dark bg-white' id='imgMonster_{{ player_inlist.id}}' style='max-height:3.7rem;' src="/img/monsters/to-right/regular/{% if player_inlist.monster == null %}none.png{% else %}{{ player_inlist.monster.imgName}}{% endif %}">
+                        </div>
+                    </div>
                 </div>
-                <div class="col-auto">
-                    <img class='img-fluid' id='imgMonster_{{ player_inlist.id}}' style='max-height:4rem;' src="/img/monsters/{% if player_inlist.monster == null %}none.png{% else %}to-left/regular/{{ player_inlist.monster.imgName}}{% endif %}">
-                </div>
-                <div class="col-xl-1 col-lg-1 col-md-1 text-center align-middle">
+                <div class="col-1 m-0 p-0 ml-0 pl-2 text-center align-middle">
                     <span id='ready_{{ player_inlist.id}}' >
-                        <span class="badge badge-{% if player_inlist.isready == false %}danger{% else %}success{% endif %}  pt-2" style="display:block; min-width:110px; min-height:36px; font-size: 1rem;">{% if player_inlist.isready == false %}Attente{% else %}Prêt{% endif %}</span>
+                        <span class="badge badge-{% if player_inlist.isready == false %}danger{% else %}success{% endif %} p-0" style="display:block; min-height:2.5rem; line-height:2.5rem; font-size: 1rem;">{% if player_inlist.isready == false %}Attente{% else %}Prêt{% endif %}</span>
                     </span>
                 </div>                    
             {% endif %}
-
-            {% if app.user == game.creatoruser %}
-                <div class="col-xl-1 col-lg-1 col-md-1 text-right">
-                {% if player_inlist.user != app.user %}
-                    <a class="btn btn-danger btn-sm mr-2" href={{ path('player.kick', { 'id' : player_inlist.id }) }}>Kick</a>
-                {% endif %}
-                </div>
-            {% endif %}
-
         </div>
     {% endfor %}  
     </div>
     <input type="hidden" id="lobby__token" name="lobby[_token]" value="JuZQAMAkRNqHF3FfDrtd_g-MTHekRGWBEUxAm61X7fI" />
     {% if app.user == game.creatoruser %}
-        <div class="row justify-content-center">
-            <input type='button' class="btn btn-danger col-12 col-xl-4 col-lg-4 col-md-4" id='launchgame' name='launchgame' value='Lancer la partie !' disabled='disabled'></div>
-        
+        <div class="row align-items-center justify-content-center pt-4">
+            <div class="col-2 m-0 p-0"></div>
+            <div class="col-4 m-0 p-0">
+                <input type='button' class="btn btn-danger col-12" id='launchgame' name='launchgame' value='Lancer la partie !' disabled='disabled'>
+            </div>
+            <div class="col-2 m-0 ml-0 p-0"></div>
+
+        </div>
     {% endif %}
     </form> 
-    </div> 
-    
+    </div>
 {% endblock %}
 
-
 {% block javascripts %}
+    {{ parent() }}
     {{ encore_entry_script_tags('lobby') }} 
 {% endblock %}
 
