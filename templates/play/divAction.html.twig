@@ -4,7 +4,7 @@
             <span id="isplaying_label">TOUR DE</span>
             <span id="isplaying_name">{{ playing.user.username }}</span>
             <span id="isplaying_img" class="rounded-circle bg-white" style="display:inline-block;min-height:2.5rem;min-width:2.5rem;"><img  style="max-width:2.5rem;" src="/img/monsters/{%  if playing.incity %}to-right{% else %}to-left{% endif %}/regular/{{ playing.monster.imgname }}"></span>
-            <button class="btn btn-light" id="yo">refresh</button>
+            <button class="btn btn-danger text-white fas fa-sync p-1 refresh" id="refresh2" style="position: absolute; display: inline; right: 0.5rem; min-height:2.5rem;min-width:2.5rem;"></button>
         </p>
         <div id='playGlobal' class="row m-0 p-2 {% if hasAction ==1 %}bg-orange{% endif %} align-items-center">
             <div class='col-12 text-yellow text-center font150' id="playBody" >

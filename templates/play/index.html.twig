@@ -4,6 +4,18 @@
 
 {% block body %}
 
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="nope" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div id="modal_msg" class="modal-body goodgirl">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% set nb_players = players_by_order|length %}
 
     <audio id="audio_paw" src="/sound/paw.mp3" ></audio>
@@ -71,7 +83,8 @@
             {% endif %}
             <div class="col-12 m-0 p-0">
                 <div id="divLogContainer" class="bg-purple-light text-center rounded" style="border:#000000 1px solid;" >
-                    <p id='divLogTitle' class=" border border-dark bg-purple p-1 m-0 rounded-top text-yellow ">Historique  de la partie</p>
+                    <p id='divLogTitle' class=" border border-dark bg-purple p-1 m-0 rounded-top text-yellow "><span>Historique  de la partie</span>
+                        <button class="btn btn-danger text-white fas fa-sync p-1 refresh" id="refresh1" style="position: absolute; display: inline; right: 0.25rem;"></button></p>
                     <div id="divLog" class="bg-purple-light rounded" style="overflow:auto;display:none;" >
                         {%  for log in list_logs %}
                             <div class='log_detail bg-purple-medium border border-dark pt-1 pb-1 pl-2 pr-2 m-0 text-left'>{{log.htmlContentLog}}</div>

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div  class="jumbotron bg-purple-light goodgirl text-yellow mt-2 mb-2 ml-3 mr-3 p-3 text-center" >
+
+    <div class="row text-center">
+        <div class="col-1">#</div>
+        <div class="col-2">Pseudo</div>
+        <div class="col-1">Parties</div>
+        <div class="col-1">Victoires</div>
+        <div class="col-1">kills</div>
+        <div class="col-1">points</div>
+    </div>
+        {% for u in ranking %}
+    <div class="row text-center">
+        <div class="col-1">{{ loop.index }}</div>
+        <div class="col-2">{{ u.pseudo }}</div>
+            <div class="col-1">{{ u.nbGamesPlayed }}</div>
+            <div class="col-1"><span>{{ u.nbGamesWon }}</span> <span class="font75">({{ u.prctWin|number_format(2, '.', ',') }}%)<span></div>
+            <div class="col-1"><span>{{ u.nbGamesWonKills }}</span> <span class="font75">({{ u.prctWinKills|number_format(2, '.', ',') }}%)<span></div>
+            <div class="col-1"><span>{{ u.nbGamesWonPoints }}</span> <span class="font75">({{ u.prctWinPoints|number_format(2, '.', ',') }}%)<span></div>
+    </div>
+        {% endfor %}
+
+</div>
+
+
+{% endblock %}

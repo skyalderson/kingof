@@ -54,16 +54,19 @@
                                 </a>
                                 <div class="dropdown-menu bg-purple" aria-labelledby="navbarDropdown">
                                     {% if nb_games_waiting > 0 %}
-                                        <p class="p-0 m-0 text-yellow">Parties en attente</p>
+                                        <p class="p-0 pl-2 m-0 text-yellow goodgirl font75">Parties en attente</p>
                                         {% for p in app.user.players %}
-                                            {% if p.game.state == 1 %}<a class="dropdown-item goodgirl text-yellow" href="{{ path('game.lobby', { 'id': p.game.id }) }}">{{ p.game.name }}</a>{% endif %}
+                                            {{ dump(p.game) }}
+                                            {% if p.game.state == 1 %}<a class="dropdown-item goodgirl text-yellow" href="{{ path('game.lobby', { 'id': p.game.id }) }}">{{ p.game.players|length }} <i class="text-white fas fa-user-circle"></i> - {{ p.game.name }}</a>{% endif %}
                                         {% endfor %}
                                     {% endif %}
                                     {% if nb_games_playing > 0 and nb_games_waiting > 0 %}<div class="dropdown-divider"></div>{% endif %}
                                     {% if nb_games_playing > 0 %}
-                                        <p class="p-0 m-0 text-yellow">Parties en cours</p>
+                                        <p class="p-0 pl-2 m-0 text-yellow goodgirl font75">Parties en cours</p>
+
                                         {% for p in app.user.players %}
-                                            {% if p.game.state == 2 %}<a class="dropdown-item goodgirl text-yellow" href="{{ path('play', { 'id': p.game.id }) }}">{{ p.game.name }}</a>{% endif %}
+
+                                            {% if p.game.state == 2 %}<a class="dropdown-item goodgirl text-yellow" href="{{ path('play', { 'id': p.game.id }) }}">{{ p.game.players|length }} <i class="text-white fas fa-user-circle"></i> - {{ p.game.name }}</a>{% endif %}
                                         {% endfor %}
                                     {% endif %}
                                 </div>
@@ -72,6 +75,9 @@
                     {% endif %}
                     <li class="nav-item">
                       <a class="goodgirl text-yellow nav-link " href="{{ path('rules') }}">Règles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="goodgirl text-yellow nav-link " href="{{ path('rankings') }}">Classement</a>
                     </li>
 
                 </ul>
@@ -94,7 +100,7 @@
                         <span class="navbar-text goodgirl text-yellow">Bienvenue, {{app.user.username}}</span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link goodgirl text-yellow" href="{{ path('app_logout') }}"><img src="/img/icons/logout1.png" height="20px"></a>
+                        <a class="btn btn-danger btn-lg fas fa-sign-out-alt p-1 ml-2 mt-1" href="{{ path('app_logout') }}"></a>
                     </li>
                     {% endif %}
                   </ul>
@@ -102,11 +108,7 @@
               </div>
             </nav>
 
-
       {% block body %}{% endblock %}
-
-
-
 
       {% block javascripts %}
           {{ encore_entry_script_tags('app') }}

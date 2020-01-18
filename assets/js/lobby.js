@@ -3,7 +3,7 @@ $(document).ready(function () {
     resizeLabelName();
     resizeNames();
 
-    //setInterval(verifGame, 5000);
+    setInterval(verifGame, 5000);
 
     function resizeNames()
     {
@@ -34,10 +34,12 @@ $(document).ready(function () {
         });
     }
 
-    function verifGame() {
+    function verifGame()
+    {
         $.ajax({
             url: "/lobby/data",
             method: "post",
+            async: false,
             data: {
                 idGame: $("#data").data("gameid"),
                 idPlayer: $("#data").data("playerid")
@@ -47,7 +49,8 @@ $(document).ready(function () {
         })
     }
 
-    function updateData(msg) {
+    function updateData(msg)
+    {
         let exists = JSON.parse(msg['exists']);
         let kicked = JSON.parse(msg['kicked']);
         let waiting = JSON.parse(msg['waiting']);
@@ -69,40 +72,81 @@ $(document).ready(function () {
                             $("#monster_" + player.id).val(player.monster);
                             $("#imgMonster_" + player.id).attr('src', '/img/monsters/to-right/regular/'+player.monsterImg);
 
-                            if (player.ready === false)
-                                $('#ready_' + player.id).html("<span class='badge badge-danger' style='display:block; min-width:110px; min-height:36px; font-size: 1rem;'>Attente</span>");
-                            else
-                                $('#ready_' + player.id).html("<span class='badge badge-success' style='display:block; min-width:110px; min-height:36px; font-size: 1rem;'>Prêt</span>");
-
+                            if (player.ready === false) {
+                                $('#ready_' + player.id).removeClass("badge-success");
+                                $('#ready_' + player.id).addClass("badge-danger");
+                                $('#ready_' + player.id).html("Attente");
+                            }else {
+                                $('#ready_' + player.id).removeClass("badge-danger");
+                                $('#ready_' + player.id).addClass("badge-success");
+                                $('#ready_' + player.id).html("Prêt");
+                            }
                         } else {
-                            let html = "<div id='row_" + player.id + "' class='row justify-content-center row_player' data-playerid='" + player.id + "'>";
-                            // OCCURENCE JOUEUR
-                            html = html + "<div class='col-auto text-center align-middle'><label class='col-form-label'><span class='align-middle bg-purple lbl text-yellow text-center'>Joueur " + nbHere + " :</span></label></div>";
-                            html = html + "<div class='col-1 text-center font150'><span>" + player.name + "</span></div>";
-                            html = html + "<div class='col-auto'><label class='col-form-label'><span class='align-middle bg-purple lbl text-yellow text-center'>Monstre :</span></label></div>";
-                            html = html + "<div class='col-3'><input type='text' id='monster_" + player.id + "' name='monster_" + player.id + "' readonly='readonly' disabled='disabled' value='" + player.monster + "' class='form-control'></div>";
-                            html = html + "<div class='col-auto'><img id='imgMonster_" + player.id + "' class='img-fluid' style='max-height:4rem;' src='/img/monsters/to-right/regular/" + player.monsterImg + "'></div>";
-                            html = html + "<div class='col-1text-center'><span id='ready_" + player.id + "'>";
 
-                            html = html + "<span class='badge badge-";
+                            let html = "<div id='row_" + player.id + "' class='row justify-content-center align-items-center row_player' data-playerid='" + player.id + "'>";
+
+                            // Label Joueur
+                            html = html + "<div class='col-1 m-0 p-0 ml-0'>";
+                            html = html + "<div class='row m-0 p-0 align-middle'>";
+                            html = html + "<div class='col-";
+                            if ($("#data").data("playeruserid") === $("#data").data("creatorid"))
+                                html = html + "auto";
+                            else
+                                html = html + "11";
+                            html = html + " m-0 p-0 text-left'>";
+                            html = html + "<p class=' pr-2 pl-2 pt-1 pb-1 m-0 align-middle bg-purple lbl text-yellow text-center'><span class='labelName d-block'>Joueur ";
+
+
+                            // BUUUUUUUUUUUUUUUUUUUUUUUUG
+                            if ($("#data").data("playeruserid") !== $("#data").data("creatorid")) {html = html + "#";}
+                            html = html + nbHere + "</span></p></div>";
+                            if ($("#data").data("playeruserid") === $("#data").data("creatorid")) {html = html + "<div class='col-auto d-inline align-middle m-0 p-0 pt-1 pl-1'><a class='btn btn-danger btn-sm fas fa-ban p-1' href='/player/kick/" + player.id + "'></a></div>";}
+                            html = html + "</div></div>";
+
+
+                            // Pseudo Joueur
+                            html = html + "<div class='col-1 text-center m-0 p-0  font150'><p class='playerNameP m-0 p-0 pl-";
+                            if ($("#data").data("playeruserid") === $("#data").data("creatorid")) {html = html + "2";}
+                            else {html = html + "1";}
+                            html = html + "' style='min-width:100%; max-width:100%'><span class='playerNameSpan m-0 p-0' style='line-height:1.5rem; font-size:1.5rem; visibility:hidden;'>" + player.name + "</span></p> </div>";
+
+
+                            // Label Monstre
+                            html = html + "<div class='col-1 m-0 p-0 text-center'><label class='col-form-label'><span class='p-2 align-middle bg-purple lbl text-yellow text-center'>Monstre</span> </label> </div>";
+
+
+                            // Bloc Monstre
+                            html = html + "<div class='col-3 m-0 p-0'>";
+                            html = html + "<div class='row align-items-center m-0 p-0'>";
+                            html = html + "<div class='col-10 m-0 p-0 01'>";
+                            html = html + "<input type='text' id='monster_" + player.id + "' name='monster_' readonly='readonly' disabled='disabled' value='" + player.monster + "' class='form-control'>";
+                            html = html + "</div>";
+                            html = html + "<div class='col-2 m-0 p-0 pl-2'>";
+                            html = html + "<img class='img-fluid rounded-circle border border-dark bg-white' id='imgMonster_" + player.id + "' style='max-height:3.7rem;' src='/img/monsters/to-right/regular/" + player.monsterImg + "'>";
+                            html = html + "</div>";
+                            html = html + "</div>";
+                            html = html + "</div>";
+
+
+                            // Bloc Ready or Not
+                            html = html + "<div class='col-1 m-0 p-0 ml-0 pl-2 text-center align-middle'>";
+                            html = html + "<span id='ready_" + player.id + "' class='badge badge-";
                             if (player.ready === true) {
                                 html = html + "success";
                             } else {
                                 html = html + "danger";
                             }
-                            html = html+"' style='display:block; min-width:110px; min-height:36px; font-size: 1rem;'>";
+                            html = html + " p-0' style='display:block; min-height:2.5rem; line-height:2.5rem; font-size: 1rem;'>";
                             if (player.ready === true) {
                                 html = html + "Prêt";
                             } else {
                                 html = html + "Attente";
                             }
-                            html = html + "</span></span></div>";
+                            html = html + "</span></div>";
 
-                            if ($("#data").data("playeruserid") === $("#data").data("creatorid")) {
-                                html = html + "<div class='col-1 text-right'><a class='btn btn-danger btn-sm' href='/player/kick/" + player.id + "'>Kick</a></div>";
-                            }
+
+
                             html = html + "</div>";
-
                             $("#list").append(html);
 
                             nbHere = +nbHere + 1;
@@ -118,8 +162,6 @@ $(document).ready(function () {
                     });
                     resizeNames();
                 } else {
-
-
                     $('#modal_msg').html("Vous avez été exclu de la partie.");
                     $('#modal').modal();
                     setTimeout(function () {
@@ -149,7 +191,8 @@ $(document).ready(function () {
         }
     }
 
-    $("#lobby_monster_self").change(function () {
+    $("#lobby_monster_self").change(function ()
+    {
         selectMonster();
 
         let imgName = "/img/monsters/";
@@ -163,10 +206,12 @@ $(document).ready(function () {
         $("#imgMonster_self").attr("src",imgName);
     });
 
-    function selectMonster() {
+    function selectMonster()
+    {
         $.ajax({
             url: "/lobby/select/monster",
             method: "post",
+            async: false,
             data: {
                 idGame: $("#data").data("gameid"),
                 idPlayer: $("#data").data("playerid"),
@@ -183,7 +228,8 @@ $(document).ready(function () {
         })
     }
 
-    $("#lobby_ready_self").change(function () {
+    $("#lobby_ready_self").change(function ()
+    {
         if (document.getElementById('lobby_ready_self').checked && $("#lobby_monster_self").val() === "0") {
             $('#lobby_ready_self').bootstrapToggle('off');
             $('#modal_msg').html("Vous devez d'abord choisir un monstre.");
@@ -193,24 +239,29 @@ $(document).ready(function () {
         }
     });
 
-    function readyState() {
+    function readyState()
+    {
         let isReady = document.getElementById('lobby_ready_self').checked;
 
         $.ajax({
             url: "/lobby/ready",
             method: "post",
+            async: false,
             data: {
                 idPlayer: $("#data").data("playerid"),
                 ready: isReady
             }
         }).done(function (msg) {
+
         })
     }
 
-    $("#launchgame").click(function () {
-        $.ajax({
+    $("#launchgame").click(function ()
+    {
+       /* $.ajax({
             url: "/lobby/islaunchready",
             method: "post",
+            async: false,
             data: {
                 idGame: $("#data").data("gameid"),
             }
@@ -224,7 +275,9 @@ $(document).ready(function () {
                 $('#modal_msg').html("Nope.");
                 $('#modal').modal();
             }
-        })
+        })*/
+
+        launchGame();
     });
 
     function launchGame()
@@ -232,11 +285,14 @@ $(document).ready(function () {
         $.ajax({
             url: "/lobby/launch",
             method: "post",
+            async: false,
             data: {
                 idGame: $("#data").data("gameid")
             }
         }).done(function (msg) {
-
+            if(msg === 'OK') {
+                window.location.replace("/play/"+$("#data").data("gameid"));
+            }
         })
     }
 });

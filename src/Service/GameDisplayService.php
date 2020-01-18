@@ -92,6 +92,14 @@ class GameDisplayService
                     $_dataDivAction = $this->getActionEnterTokyoBay($playerAction, $playerSessionIsPlaying);
                     break;
 
+                case 'out_of_tokyo_bay':
+                    $_dataDivAction = $this->getActionOutOfTokyoBay($playerAction, $playerSessionIsPlaying);
+                    break;
+
+                case 'enter_tokyo_city_from_tokyo_bay':
+                    $_dataDivAction = $this->getActionEnterTokyoCityFromTokyoBay($playerAction, $playerSessionIsPlaying);
+                    break;
+
                 case 'has_won_by_killing':
                     $_dataDivAction = $this->getActionHasWonByKilling($playerAction, $playerSessionIsPlaying);
                     break;
@@ -616,6 +624,32 @@ class GameDisplayService
         $st = ($playerSessionIsPlaying) ? 's' : 't';
         $s = ($playerSessionIsPlaying) ? 's' : '';
         $_dataDivAction['playBody'] = "Tokyo Bay est inoccupée, $playerLabel doi$st donc y entrer et gagne$s 1#symbols/star.png£";
+
+        $_dataDivAction['playBtn'] = ($playerSessionIsPlaying) ? 'OK' : null;
+        $_dataDivAction['playBtn2'] = null;
+
+        return $_dataDivAction;
+    }
+
+    public function getActionOutOfTokyoBay(Player $playerAction, $playerSessionIsPlaying)
+    {
+        $playerLabel = ($playerSessionIsPlaying) ? 'Tu ' : $playerAction->getName().' ';
+        $st = ($playerSessionIsPlaying) ? 's' : 't';
+        $s = ($playerSessionIsPlaying) ? 's' : '';
+        $_dataDivAction['playBody'] = "$playerLabel doi$st quitter Tokyo Bay car il reste moins de 5 joueurs en jeu";
+
+        $_dataDivAction['playBtn'] = ($playerSessionIsPlaying) ? 'OK' : null;
+        $_dataDivAction['playBtn2'] = null;
+
+        return $_dataDivAction;
+    }
+
+    public function getActionEnterTokyoCityFromTokyoBay(Player $playerAction, $playerSessionIsPlaying)
+    {
+        $playerLabel = ($playerSessionIsPlaying) ? 'Tu ' : $playerAction->getName().' ';
+        $st = ($playerSessionIsPlaying) ? 's' : 't';
+        $s = ($playerSessionIsPlaying) ? 's' : '';
+        $_dataDivAction['playBody'] = "$playerLabel doi$st quitter Tokyo Bay et aller dans Tokyo City car il reste moins de 5 joueurs en jeu";
 
         $_dataDivAction['playBtn'] = ($playerSessionIsPlaying) ? 'OK' : null;
         $_dataDivAction['playBtn2'] = null;

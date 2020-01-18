@@ -333,14 +333,16 @@ class GamePlayService
                 break;
 
             case 'enter_tokyo_city':
-                return $this->displayPlayerNameInLog($playerAction).' est entré dans Tokyo City';
+                return $this->displayPlayerNameInLog($playerAction).' est entré dans Tokyo City et a gagné 1#symbols/star.png£';
                 break;
             case 'enter_tokyo_bay':
-                return $this->displayPlayerNameInLog($playerAction).' est entré dans Tokyo Bay';
+                return $this->displayPlayerNameInLog($playerAction).' est entré dans Tokyo Bay et a gagné 1#symbols/star.png£';
                 break;
-
-            case 'has_won':
-                return $this->displayPlayerNameInLog($playerAction).' a gagné ?';
+            case 'out_of_tokyo_bay':
+                return $this->displayPlayerNameInLog($playerAction).' est sorti de Tokyo Bay car il reste moins de 5 joueurs en jeu';
+                break;
+            case 'enter_tokyo_city_from_tokyo_bay':
+                return $this->displayPlayerNameInLog($playerAction).' est passé de Tokyo Bay à Tokyo City car il reste moins de 5 joueurs en jeu';
                 break;
 
             default:
@@ -508,11 +510,12 @@ class GamePlayService
 
             case 'resolve_dices_victory':
                 $nextAction = $this->getNextResolve($playerAction, 'victory');
-                if (!$nextAction) {
-                    $nextAction = $this->getNextActionAfterResolve($playerAction);
-                }
                 $nextPlayer = $playerAction;
-                if ('start_turn' == $nextAction) {
+                if (!$nextAction) {
+                    $nextAction = $this->getActionNewPosition($playerAction);
+                }
+                if (!$nextAction) {
+                    $nextAction = $this->getActionAfterNewPosition($playerAction);
                     $nextPlayer = $this->findNextPlayer($game, $playerAction);
                 }
 
@@ -528,10 +531,11 @@ class GamePlayService
             case 'resolve_dices_heart':
                 $nextAction = $this->getNextResolve($playerAction, 'heart');
                 if (!$nextAction) {
-                    $nextAction = $this->getNextActionAfterResolve($playerAction);
+                    $nextAction = $this->getActionNewPosition($playerAction);
                 }
                 $nextPlayer = $playerAction;
-                if ('start_turn' == $nextAction) {
+                if (!$nextAction) {
+                    $nextAction = $this->getActionAfterNewPosition($playerAction);
                     $nextPlayer = $this->findNextPlayer($game, $playerAction);
                 }
 
@@ -545,11 +549,12 @@ class GamePlayService
 
             case 'resolve_dices_flash':
                 $nextAction = $this->getNextResolve($playerAction, 'flash');
-                if (!$nextAction) {
-                    $nextAction = $this->getNextActionAfterResolve($playerAction);
-                }
                 $nextPlayer = $playerAction;
-                if ('start_turn' == $nextAction) {
+                if (!$nextAction) {
+                    $nextAction = $this->getActionNewPosition($playerAction);
+                }
+                if (!$nextAction) {
+                    $nextAction = $this->getActionAfterNewPosition($playerAction);
                     $nextPlayer = $this->findNextPlayer($game, $playerAction);
                 }
 
@@ -573,6 +578,7 @@ class GamePlayService
                 $_players = $playerAction->getGame()->getPlayers();
                 foreach ($_players as $playerEnemy) {
                     if (0 === $playerEnemy->getHp() && true === $playerEnemy->getIsAlive()) {
+                        $playerEnemy->setInCity(0);
                         ++$nbDeadPlayers;
                     }
                 }
@@ -601,12 +607,12 @@ class GamePlayService
                         $secondAction = $this->getNextResolve($playerAction, 'paw');
                         $secondPlayer = $playerAction;
                         if (!$secondAction) {
-                            $secondAction = $this->getNextActionAfterResolve($playerAction);
+                            $secondAction = $this->getActionNewPosition($playerAction);
                         }
-                        if ('start_turn' == $secondAction) {
+                        if (!$secondAction) {
+                            $secondAction = $this->getActionAfterNewPosition($playerAction);
                             $secondPlayer = $this->findNextPlayer($game, $playerAction);
                         }
-
                     }
                 } else {
                     if (0 !== $nbAttackedInTokyo) {
@@ -616,9 +622,10 @@ class GamePlayService
                         $nextPlayer = $playerAction;
                         $nextAction = $this->getNextResolve($playerAction, 'paw');
                         if (!$nextAction) {
-                            $nextAction = $this->getNextActionAfterResolve($playerAction);
+                            $nextAction = $this->getActionNewPosition($playerAction);
                         }
-                        if ('start_turn' == $nextAction) {
+                        if (!$nextAction) {
+                            $nextAction = $this->getActionAfterNewPosition($playerAction);
                             $nextPlayer = $this->findNextPlayer($game, $playerAction);
                         }
                     }
@@ -630,7 +637,6 @@ class GamePlayService
                 $nextLog->setPlayer($nextPlayer);
                 $nextLog->setNextAction($secondAction);
                 $nextLog->setNextPlayer($secondPlayer);
-
 
                 $this->prepareNextAction($nextLog);
                 break;
@@ -691,9 +697,10 @@ class GamePlayService
                     $nextPlayer = $this->getPlayerPlaying($game);
                     $nextAction = $this->getNextResolve($nextPlayer, 'paw');
                     if (!$nextAction) {
-                        $nextAction = $this->getNextActionAfterResolve($nextPlayer);
+                        $nextAction = $this->getActionNewPosition($nextPlayer);
                     }
-                    if ('start_turn' == $nextAction) {
+                    if (!$nextAction) {
+                        $nextAction = $this->getActionAfterNewPosition($playerAction);
                         $nextPlayer = $this->findNextPlayer($game, $nextPlayer);
                     }
                 }
@@ -710,11 +717,13 @@ class GamePlayService
 
             case 'enter_tokyo_city':
             case 'enter_tokyo_bay':
+            case 'enter_tokyo_city_from_tokyo_bay':
+            case 'out_of_tokyo_bay':
                 if (20 === $playerAction->getVp()) {
                     $nextAction = 'has_won_by_victory_points';
                     $nextPlayer = $playerAction;
                 } else {
-                    $nextAction = 'start_turn';
+                    $nextAction = $this->getActionAfterNewPosition($playerAction);
                     $nextPlayer = $this->findNextPlayer($game, $playerAction);
                 }
 
@@ -727,7 +736,7 @@ class GamePlayService
                 break;
 
             case 'has_won_by_victory_points':
-                $nextAction = 'start_turn';
+                $nextAction = $this->getActionAfterNewPosition($playerAction);
                 $logDone->setMessage($this->getHTMLContentLog($nameAction, $playerAction));
 
                 $nextLog->setAction($nextAction);
@@ -741,6 +750,27 @@ class GamePlayService
         $this->em->refresh($nextLog);
 
         return true;
+    }
+
+    public function getActionAfterNewPosition(Player $playerACtion)
+    {
+        return 'start_turn';
+    }
+
+    public function findPlayerInTokyoBay(Game $game)
+    {
+        $this->em->refresh($game);
+        $_players = $game->getPlayers();
+
+        foreach ($_players as $player) {
+            $this->em->refresh($player);
+            if (2 === $player->getInCity()) {
+                return $player;
+                break;
+            }
+        }
+
+        return false;
     }
 
     public function prepareNextAction(Log $nextLog)
@@ -845,14 +875,16 @@ class GamePlayService
             case 'resolve_dices_paw':
                 $_playersAttacked = $this->resolvePaws($playerAction);
 
+                $nbGDU = 0;
                 foreach ($_playersAttacked as $k => $playerAttacked) {
-                    $gameDataUpdate[$k] = new GameDataUpdate();
-                    $gameDataUpdate[$k]->setLog($nextLog);
-                    $gameDataUpdate[$k]->setPlayer($playerAttacked);
-                    $gameDataUpdate[$k]->setType('hp');
-                    $gameDataUpdate[$k]->setValue($playerAttacked->getHp());
-                    $gameDataUpdate[$k]->setValue2($playerAttacked->getHpMax());
-                    $this->em->persist($gameDataUpdate[$k]);
+                    $gameDataUpdate[$nbGDU] = new GameDataUpdate();
+                    $gameDataUpdate[$nbGDU]->setLog($nextLog);
+                    $gameDataUpdate[$nbGDU]->setPlayer($playerAttacked);
+                    $gameDataUpdate[$nbGDU]->setType('hp');
+                    $gameDataUpdate[$nbGDU]->setValue($playerAttacked->getHp());
+                    $gameDataUpdate[$nbGDU]->setValue2($playerAttacked->getHpMax());
+                    $this->em->persist($gameDataUpdate[$nbGDU]);
+                    ++$nbGDU;
                 }
                 break;
 
@@ -934,7 +966,45 @@ class GamePlayService
                 $this->em->persist($gameDataUpdateVp);
                 break;
 
+            case 'out_of_tokyo_bay':
+                $playerAction->setInCity(0);
+                $gameDataUpdate = new GameDataUpdate();
+                $gameDataUpdate->setLog($nextLog);
+                $gameDataUpdate->setPlayer($playerAction);
+                $gameDataUpdate->setType('out_of_tokyo');
+                $gameDataUpdate->setValue(2);
+                $this->em->persist($gameDataUpdate);
+                break;
+
+            case 'enter_tokyo_city_from_tokyo_bay':
+                $playerAction->setInCity(1);
+
+                $gameDataUpdateLeave = new GameDataUpdate();
+                $gameDataUpdateLeave->setLog($nextLog);
+                $gameDataUpdateLeave->setPlayer($playerAction);
+                $gameDataUpdateLeave->setType('out_of_tokyo');
+                $gameDataUpdateLeave->setValue(2);
+                $this->em->persist($gameDataUpdateLeave);
+
+                $gameDataUpdateEnter = new GameDataUpdate();
+                $gameDataUpdateEnter->setLog($nextLog);
+                $gameDataUpdateEnter->setPlayer($playerAction);
+                $gameDataUpdateEnter->setType('in_tokyo');
+                $gameDataUpdateEnter->setValue(1);
+                $gameDataUpdateEnter->setValue2($playerAction->getMonster()->getImgName());
+                $this->em->persist($gameDataUpdateEnter);
+                break;
+
             case 'has_won_by_killing':
+                $playerAction->setInCity(0);
+                $gameDataUpdate = new GameDataUpdate();
+                $gameDataUpdate->setLog($nextLog);
+                $gameDataUpdate->setPlayer($playerAction);
+                $gameDataUpdate->setType('has_won_by_killing');
+                $gameDataUpdate->setValue($playerAction->getName());
+                $gameDataUpdate->setValue2($playerAction->getMonster()->getImgName());
+                $this->em->persist($gameDataUpdate);
+
                 $playerAction->setIsWinner(true);
                 $game->setWinner($playerAction);
                 $game->setVictoryType('kills');
@@ -943,6 +1013,15 @@ class GamePlayService
                 break;
 
             case 'has_won_by_victory_points':
+                $playerAction->setInCity(0);
+                $gameDataUpdate = new GameDataUpdate();
+                $gameDataUpdate->setLog($nextLog);
+                $gameDataUpdate->setPlayer($playerAction);
+                $gameDataUpdate->setType('has_won_by_victory_points');
+                $gameDataUpdate->setValue($playerAction->getName());
+                $gameDataUpdate->setValue2($playerAction->getMonster()->getImgName());
+                $this->em->persist($gameDataUpdate);
+
                 $playerAction->setIsWinner(true);
                 $game->setWinner($playerAction);
                 $game->setVictoryType('points');
@@ -980,46 +1059,56 @@ class GamePlayService
         return $nextPlayer;
     }
 
-    public function getNextActionAfterResolve(Player $playerAction)
+    public function getActionNewPosition(Player $playerAction)
     {
-        $_players = $playerAction->getGame()->getPlayers();
+        $this->em->refresh($playerAction);
+
         $tokyoCityOccupied = false;
+        $nbAlive = 0;
+        $tokyoBayOccupied = false;
+
+        $_players = $playerAction->getGame()->getPlayers();
         foreach ($_players as $player) {
             if (1 === $player->getInCity()) {
                 $tokyoCityOccupied = true;
-                break;
+            }
+            if (2 === $player->getInCity()) {
+                $tokyoBayOccupied = true;
+            }
+            if (0 < $player->getHp()) {
+                ++$nbAlive;
             }
         }
 
-        if (!$tokyoCityOccupied) {
-            return 'enter_tokyo_city';
-        } else {
-            $nbAlive = 0;
-            foreach ($_players as $player) {
-                if (true === $player->getIsAlive()) {
-                    ++$nbAlive;
-                }
-            }
-            if ($nbAlive > 4) {
-                $tokyoBayOccupied = false;
-                foreach ($_players as $player) {
-                    if (2 === $player->getInCity()) {
-                        $tokyoBayOccupied = true;
-                        break;
+        switch ($playerAction->getInCity()) {
+            case 0:
+                if (!$tokyoCityOccupied) {
+                    return 'enter_tokyo_city';
+                } else {
+                    if ($nbAlive > 2) {
+                        if (!$tokyoBayOccupied) {
+                            return 'enter_tokyo_bay';
+                        }
                     }
                 }
-                if (!$tokyoBayOccupied) {
-                    return 'enter_tokyo_bay';
+                break;
+
+            case 1:
+                return false;
+                break;
+
+            case 2:
+                if ($nbAlive <= 2) {
+                    if (!$tokyoCityOccupied) {
+                        return 'enter_tokyo_city_from_tokyo_bay';
+                    } else {
+                        return 'out_of_tokyo_bay';
+                    }
                 }
-            }
+                break;
         }
 
-        // Si on ne doit pas entrer dans Tokyo
-        if (20 == $playerAction->getVp()) {
-            return 'has_won_by_victory_points';
-        } else {
-            return 'start_turn';
-        }
+        return false;
     }
 
     public function getNextResolve(Player $playerAction, $actualResolve)
@@ -1042,8 +1131,8 @@ class GamePlayService
 
     public function killPlayer(Player $deadPlayer)
     {
-        $deadPlayer->setIsAlive(false);
         $deadPlayer->setInCity(0);
+        $deadPlayer->setIsAlive(false);
     }
 
     public function attackWithPaws(Player $playerEnemy, $paws)

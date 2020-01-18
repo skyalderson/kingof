@@ -3,13 +3,7 @@
 {% block title %}Lobby - {{ game.name }}{% endblock %}
 
 {% block body %}
-
-<!--p>TODO : </p>
-<ul>
-    <li>lancer la partie (vérif tout le monde a un monstre / tout le monde est prêt)</li>
-</ul-->
-
-
+    {{ parent() }}
 <!-- Modal -->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="nope" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -23,7 +17,6 @@
   </div>
 </div>
 
-
 <div  class="jumbotron goodgirl bg-purple-light mr-3 ml-3 mb-0 pt-3 pb-3 mt-2">
     <div class="row justify-content-center text-center mb-4">
         <div class="col-7 p-0 m-0">
@@ -31,7 +24,7 @@
                 {% if app.user == game.creatoruser %}
                     <a class="btn btn-danger btn-lg fas fa-trash-alt p-1" href={{ path('game.delete', { 'id': game.id }) }} style="position: absolute; display: inline; right: 0.5rem;"></a>
                 {% else %}
-                    <a class="btn btn-danger btn-lg fas fa-sign-out-alt p-1" href={{ path('game.delete', { 'id': game.id }) }} style="position: absolute; display: inline; right: 0.5rem;"></a>
+                    <a class="btn btn-danger btn-lg fas fa-sign-out-alt p-1" href={{ path('game.quit', { 'id': player.id }) }} style="position: absolute; display: inline; right: 0.5rem;"></a>
                 {% endif %}
             </h4>
         </div>
@@ -44,7 +37,7 @@
             <div class="col-1 m-0 p-0 ml-{% if app.user == game.creatoruser %}0{% else %}0{% endif %}">
                 <div class="row m-0 p-0 align-middle">
                     <div class="col-{% if app.user == game.creatoruser %}auto{% else %}11{% endif %} m-0 p-0 text-left">
-                        <p class=" pr-2 pl-2 pt-1 pb-1 m-0 align-middle bg-purple lbl text-yellow text-center"><span class="labelName d-block">Joueur {{ loop.index }}</span></p>
+                        <p class=" pr-2 pl-2 pt-1 pb-1 m-0 align-middle bg-purple lbl text-yellow text-center"><span class="labelName d-block">Joueur {% if app.user != game.creatoruser %}#{% endif %}{{ loop.index }}</span></p>
                     </div>
                     {% if app.user == game.creatoruser and app.user != player_inlist.user %}
                     <div class="col-auto d-inline align-middle m-0 p-0 pt-1 pl-1">
@@ -93,9 +86,7 @@
                     </div>
                 </div>
                 <div class="col-1 m-0 p-0 ml-0 pl-2 text-center align-middle">
-                    <span id='ready_{{ player_inlist.id}}' >
-                        <span class="badge badge-{% if player_inlist.isready == false %}danger{% else %}success{% endif %} p-0" style="display:block; min-height:2.5rem; line-height:2.5rem; font-size: 1rem;">{% if player_inlist.isready == false %}Attente{% else %}Prêt{% endif %}</span>
-                    </span>
+                    <span id='ready_{{ player_inlist.id}}' class="badge badge-{% if player_inlist.isready == false %}danger{% else %}success{% endif %} p-0" style="display:block; min-height:2.5rem; line-height:2.5rem; font-size: 1rem;">{% if player_inlist.isready == false %}Attente{% else %}Prêt{% endif %}</span>
                 </div>                    
             {% endif %}
         </div>

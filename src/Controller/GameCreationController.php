@@ -42,7 +42,7 @@ class GameCreationController extends AbstractController
         $game = new Game();
 
         $game->setCreatedAt($now);
-        $game->setName('Partie de '.$this->getUser()->getUsername().' - '.$now->format("Y-m-d H:i"));
+        $game->setName('Partie de '.$this->getUser()->getUsername().' - '.$now->format('Y-m-d H:i'));
 
         $mode = $modeRepo->find(1);
         $game->setMode($mode);
@@ -184,6 +184,13 @@ class GameCreationController extends AbstractController
     {
         $this->denyAccessUnlessGranted('delete', $game);
         $em = $this->getDoctrine()->getManager();
+
+        $_players = $game->getPlayers();
+        foreach ($_players as $player) {
+            $game->removePlayer($player);
+            $em->remove($player);
+        }
+        $em->flush();
         $em->remove($game);
         $em->flush();
 
@@ -219,6 +226,8 @@ class GameCreationController extends AbstractController
         $this->denyAccessUnlessGranted('quit', $player);
 
         $em = $this->getDoctrine()->getManager();
+        $game = $player->getGame();
+        $game->removePlayer($player);
         $em->remove($player);
         $em->flush();
 
@@ -235,80 +244,105 @@ class GameCreationController extends AbstractController
     public function launchGame(Request $req, GameRepository $gameRepo, PlayerRepository $playerRepo, KotCardRepository $kotCardRepo)
     {
         if ($req->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $isLaunchPossible = true;
 
             $idGame = $req->get('idGame');
             $game = $gameRepo->find($idGame);
-            $game->setState(2);
-            $game->setStartedAt(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
 
-            $log = new Log();
-            $log->setGame($game);
-
-            $_repoPlayers = $game->getPlayers()->toArray();
-            for ($i = 1; $i <= count($_repoPlayers); ++$i) {
-                $rand[$i] = $i;
-            }
-            foreach ($_repoPlayers as $player) {
-                $player = $playerRepo->find($player->getId());
-                $turn = array_rand($rand, 1);
-                unset($rand[$turn]);
-
-                $player->setTurn($turn);
-
-                if (1 === $turn) {
-                    $player->setIsPlaying(true);
-                    $log->setPlayer($player);
+            if (null === $game) {
+                $isLaunchPossible = false;
+            } else {
+                $_repoPlayers = $game->getPlayers()->toArray();
+                $nbPlayers = 0;
+                foreach ($_repoPlayers as $p) {
+                    if (false == $p->getIsReady() || null === $p->getMonster()) {
+                        $isLaunchPossible = false;
+                    }
+                    ++$nbPlayers;
                 }
-                $em->persist($player);
+                if ($nbPlayers < 2) {
+                    $isLaunchPossible = false;
+                }
             }
 
-            $log->setIsDone(false);
-            $log->setAction('start_turn');
-            $em->persist($log);
+            if ($isLaunchPossible) {
+                $em = $this->getDoctrine()->getManager();
 
-            $_cards = $kotCardRepo->findAll();
-            $i = 0;
-            foreach ($_cards as $card) {
-                if (true === $card->getAvailable()) {
-                    $_cardGame[$i] = new KotCardGame();
-                    $_cardGame[$i]->setGame($game);
-                    $_cardGame[$i]->setKotCard($card);
-                    $_cardGame[$i]->setState('pioche');
-                    $em->persist($_cardGame[$i]);
-                    ++$i;
+                $idGame = $req->get('idGame');
+                $game = $gameRepo->find($idGame);
+                $game->setState(2);
+                $game->setStartedAt(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
 
-                    if (15 === $card->getId() || 62 === $card->getId()) {
+                $log = new Log();
+                $log->setGame($game);
+
+                $_repoPlayers = $game->getPlayers()->toArray();
+                for ($i = 1; $i <= count($_repoPlayers); ++$i) {
+                    $rand[$i] = $i;
+                }
+                foreach ($_repoPlayers as $player) {
+                    $player = $playerRepo->find($player->getId());
+                    $turn = array_rand($rand, 1);
+                    unset($rand[$turn]);
+
+                    $player->setTurn($turn);
+
+                    if (1 === $turn) {
+                        $player->setIsPlaying(true);
+                        $log->setPlayer($player);
+                    }
+                    $em->persist($player);
+                }
+
+                $log->setIsDone(false);
+                $log->setAction('start_turn');
+                $em->persist($log);
+
+                $_cards = $kotCardRepo->findAll();
+                $i = 0;
+                foreach ($_cards as $card) {
+                    if (true === $card->getAvailable()) {
                         $_cardGame[$i] = new KotCardGame();
                         $_cardGame[$i]->setGame($game);
                         $_cardGame[$i]->setKotCard($card);
                         $_cardGame[$i]->setState('pioche');
                         $em->persist($_cardGame[$i]);
                         ++$i;
+
+                        if (15 === $card->getId() || 62 === $card->getId()) {
+                            $_cardGame[$i] = new KotCardGame();
+                            $_cardGame[$i]->setGame($game);
+                            $_cardGame[$i]->setKotCard($card);
+                            $_cardGame[$i]->setState('pioche');
+                            $em->persist($_cardGame[$i]);
+                            ++$i;
+                        }
                     }
                 }
+
+                for ($j = 0; $j < count($_cardGame); ++$j) {
+                    $randCard[$j] = $j;
+                }
+
+                $_randomCards = array_rand($_cardGame, 3);
+                $k = 1;
+                foreach ($_randomCards as $randomCard) {
+                    $_cardGame[$randomCard]->setState('achat');
+                    $_cardGame[$randomCard]->setPosition($k);
+                    ++$k;
+                }
+
+                $_monstersAuthorized = $game->getMonstersAuthorized();
+                foreach ($_monstersAuthorized as $monsterAuthorized) {
+                    $game->removeMonstersAuthorized($monsterAuthorized);
+                }
+
+                $em->flush();
+
+                return new Response('OK');
+            } else {
+                return new Response('NOPE');
             }
-
-            for ($j = 0; $j < count($_cardGame); ++$j) {
-                $randCard[$j] = $j;
-            }
-
-            $_randomCards = array_rand($_cardGame, 3);
-            $k = 1;
-            foreach ($_randomCards as $randomCard) {
-                $_cardGame[$randomCard]->setState('achat');
-                $_cardGame[$randomCard]->setPosition($k);
-                ++$k;
-            }
-
-            $_monstersAuthorized = $game->getMonstersAuthorized();
-            foreach ($_monstersAuthorized as $monsterAuthorized) {
-                $game->removeMonstersAuthorized($monsterAuthorized);
-            }
-
-            $em->flush();
-
-            return new Response('OK');
         } else {
             return new Response('ERROR', 400);
         }
@@ -322,22 +356,6 @@ class GameCreationController extends AbstractController
     public function isLaunchReady(Request $req, GameRepository $gameRepo)
     {
         if ($req->isXmlHttpRequest()) {
-            $isLaunchPossible = true;
-
-            $idGame = $req->get('idGame');
-            $game = $gameRepo->find($idGame);
-
-            if (null === $game) {
-                $isLaunchPossible = false;
-            } else {
-                $_repoPlayers = $game->getPlayers()->toArray();
-                foreach ($_repoPlayers as $p) {
-                    if (false == $p->getIsReady() || null === $p->getMonster()) {
-                        $isLaunchPossible = false;
-                    }
-                }
-            }
-
             return new JsonResponse(['launch_possible' => json_encode($isLaunchPossible)]);
         } else {
             return new Response('ERROR', 400);
@@ -370,6 +388,7 @@ class GameCreationController extends AbstractController
                 $isWaiting = (1 == $game->getState()) ? true : false;
                 if ($isWaiting) {
                     $_repoPlayers = $game->getPlayers()->toArray();
+                    $nbPlayers = 0;
                     foreach ($_repoPlayers as $p) {
                         if ($idPlayer != $p->getId()) {
                             $_players[$p->getId()] = [];
@@ -385,6 +404,10 @@ class GameCreationController extends AbstractController
                         if (false == $p->getIsReady() || null === $p->getMonster()) {
                             $isLaunchPossible = false;
                         }
+                        ++$nbPlayers;
+                    }
+                    if ($nbPlayers < 2) {
+                        $isLaunchPossible = false;
                     }
                 } else {
                     $isLaunchPossible = false;

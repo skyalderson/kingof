@@ -1,6 +1,10 @@
 $(document).ready(function () {
 
-    $(document).on('click', '#yo', function(){
+    $(document).on('click', '#refresh1', function(){
+        getNewData();
+    });
+
+    $(document).on('click', '#refresh2', function(){
         getNewData();
     });
 
@@ -235,6 +239,16 @@ $(document).ready(function () {
                             $(this).addClass('img-dead');
                         });
                         break;
+
+                    case 'has_won_by_victory_points':
+                        $('#modal_msg').html(gameData.value+ "a gagné en obtenant 20 points de victoire.");
+                        $('#modal').modal();
+                        break;
+
+                    case 'has_won_by_kills':
+                        $('#modal_msg').html(gameData.value+ "en étant le dernier survivant.");
+                        $('#modal').modal();
+                        break;
                 }
             });
         });
@@ -297,7 +311,7 @@ $(document).ready(function () {
                 for(let i = 1 ; i<= 8 ; i++) {
                     if($("#diceGif_"+i).length) {
                         if($("#diceGifImg_"+i).length) {
-                            timeOut = timeOut + 1000;
+                            timeOut = timeOut + 500;
                         }
                         setTimeout(function(){
                             $("#diceGif_"+i).hide();
