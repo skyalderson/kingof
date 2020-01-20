@@ -19,34 +19,34 @@
 
     <div id="data" data-userid="{{ app.user.id }}"  display="none"></div>
 
-    <div class="jumbotron bg-purple-light goodgirl pb-2">
-
-        <div class="row text-center mb-3 text-yellow">
+    <div class="jumbotron bg-purple-light text-yellow goodgirl p-2 m-3 text-center">
+        <h1 class="mb-3"><span class="bg-purple p-2 rounded">Parties en attente</span></h1>
+        <div class="row text-center mb-3 text-yellow justify-content-center">
             <div class="col-xl-1 bg-purple">Jeu</div>
             <div class="col-xl-3 bg-purple">Nom&nbsp;de&nbsp;la&nbsp;partie</div>
-            <div class="col-xl-2 bg-purple">Choix&nbsp;Monstres</div>
+            <!--div class="col-xl-2 bg-purple">Choix&nbsp;Monstres</div>
             <div class="col-xl-1 bg-purple">Mode</div>
-            <div class="col-xl-1 bg-purple">Extensions</div>
+            <div class="col-xl-1 bg-purple">Extensions</div-->
             <div class="col-xl-1 bg-purple">Joueurs</div>
-            <div class="col-xl-3 bg-purple"></div>
+            <div class="col-xl-1 bg-purple"></div>
         </div>
         <div id="list">
         {% for game in games %}
-            <div class="row text-center row-game" id="game_{{ game.id }}" data-id="{{ game.id }}">
+            <div class="row text-center row-game justify-content-center" id="game_{{ game.id }}" data-id="{{ game.id }}">
                 <div class="col-xl-1" id="img_{{ game.id }}"><img class="img-fluid" src="/img/logos/{{ game.board.imgname }}" style="max-height:30px;"></div>
                 <div class="col-xl-3" id="name_{{ game.id }}">{{ game.name }} </div>
+                <!--
                 <div class="col-xl-2" id="select_monster_{{ game.id }}">{{ game.monstersselectlabel }} </div>
                 <div class="col-xl-1" id="mode_{{ game.id }}">{{ game.mode.name }}</div>
                 <div class="col-xl-1" id="rules_{{ game.id }}">
-
                     {% for rule in game.rules %}
                         <img src="img/rules/{{ rule.imgname }}" height="20px" alt="{{ rule.name }}">
                     {% endfor %}
-
                 </div>
+                -->
                 <div class="col-xl-1" id="nb_players_t_{{ game.id }}"><p><span id="nb_players_{{ game.id }}">{{ game.nbplayers }}</span> sur {{ game.maxplayers }}</p></div>
-                <div class="col-xl-3" id="btn_{{ game.id }}">
-                    <button type="button" class="btn btn-danger btn-join" data-id="{{ game.id }}">Rejoindre</button>
+                <div class="col-xl-1" id="btn_{{ game.id }}">
+                    <button type="button" class="btn btn-sm btn-danger btn-join" data-id="{{ game.id }}">Rejoindre</button>
                 </div>
             </div>
         {% endfor %}

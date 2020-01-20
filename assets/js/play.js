@@ -317,9 +317,9 @@ $(document).ready(function () {
                             $("#diceGif_"+i).hide();
 
                             if($("#diceGif_"+(i+1)).length == 0) {
-
                                 for(let j = 1 ; j<= 8 ; j++) {
                                     if($("#diceGif_"+j).length) $("#diceCheckbox_"+j).show(0);
+
                                 }
                                 $('#playBtn').show();
                             }

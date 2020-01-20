@@ -34,7 +34,7 @@
     <div id="list">
     {% for player_inlist in game.players %}
         <div id="row_{{ player_inlist.id }}" class="row justify-content-center align-items-center row_player" data-playerid="{{ player_inlist.id }}">
-            <div class="col-1 m-0 p-0 ml-{% if app.user == game.creatoruser %}0{% else %}0{% endif %}">
+            <div class="col-1 m-0 p-0 ml-{% if app.user == game.creatoruser %}0{% else %}0{% endif %} ">
                 <div class="row m-0 p-0 align-middle">
                     <div class="col-{% if app.user == game.creatoruser %}auto{% else %}11{% endif %} m-0 p-0 text-left">
                         <p class=" pr-2 pl-2 pt-1 pb-1 m-0 align-middle bg-purple lbl text-yellow text-center"><span class="labelName d-block">Joueur {% if app.user != game.creatoruser %}#{% endif %}{{ loop.index }}</span></p>

@@ -320,6 +320,8 @@ class GameDisplayService
         }
         $_dataDivAction['playBody'] .= '</div>';
 
+
+
         foreach ($_dices as $_dice) {
             $dice = $_dice['obj'];
             $pos = $dice->getPosition();

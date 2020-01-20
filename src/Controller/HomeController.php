@@ -33,6 +33,22 @@ class HomeController extends AbstractController
     }
 
     /**
+     * @Route("/legal-mentions", name="legal-mentions")
+     */
+    public function legalMentions()
+    {
+        return $this->render('legal-mentions/index.html.twig', []);
+    }
+
+    /**
+     * @Route("/team", name="team")
+     */
+    public function team()
+    {
+        return $this->render('team/index.html.twig', []);
+    }
+
+    /**
      * @Route("/rankings", name="rankings")
      */
     public function rankings(UserRepository $userRepo)

@@ -578,7 +578,6 @@ class GamePlayService
                 $_players = $playerAction->getGame()->getPlayers();
                 foreach ($_players as $playerEnemy) {
                     if (0 === $playerEnemy->getHp() && true === $playerEnemy->getIsAlive()) {
-                        $playerEnemy->setInCity(0);
                         ++$nbDeadPlayers;
                     }
                 }
@@ -922,6 +921,7 @@ class GamePlayService
                         $this->em->persist($gameDataUpdate[$nbGDU]);
 
                         $this->killPlayer($playerEnemy);
+                        ++$nbGDU;
                     }
                 }
                 break;
@@ -1085,7 +1085,7 @@ class GamePlayService
                 if (!$tokyoCityOccupied) {
                     return 'enter_tokyo_city';
                 } else {
-                    if ($nbAlive > 2) {
+                    if ($nbAlive > 3) {
                         if (!$tokyoBayOccupied) {
                             return 'enter_tokyo_bay';
                         }
@@ -1098,7 +1098,7 @@ class GamePlayService
                 break;
 
             case 2:
-                if ($nbAlive <= 2) {
+                if ($nbAlive <= 3) {
                     if (!$tokyoCityOccupied) {
                         return 'enter_tokyo_city_from_tokyo_bay';
                     } else {
